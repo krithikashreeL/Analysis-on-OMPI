@@ -1,0 +1,53 @@
+Label-name,open-issues-count,closed-issues-count
+⚠️ WIP-DNM!,26,162
+Auto closed,0,1
+bug,137,3257
+code cleanup,8,326
+documentation,20,352
+duplicate,0,21
+enhancement,43,609
+feature request,4,7
+fix for v4.0.2,0,5
+fortran bindings,6,61
+good first issue,2,8
+hacktoberfest,0,10
+help wanted,6,20
+invalid,0,16
+java bindings,3,26
+memory leak,1,6
+MPI-3.0-errata,0,6
+MPI-3.1,0,10
+MPI-4.0,9,31
+NEWS,1,274
+pending,0,1
+performance,7,48
+PR to PRRTE,0,3
+pushed-back,0,28
+question,64,229
+RFC,1,20
+RM approved,0,1369
+RTE,5,89
+sessions,0,2
+Severity: blocker,7,517
+Severity: critical,5,203
+Severity: minor,15,137
+State: Awaiting code,1,7
+State: Awaiting developer information,3,17
+State: Awaiting merge to release branches,0,18
+State: Awaiting user information,11,18
+State: PR posted,0,23
+State: Verification of fix,0,3
+State: wontfix,0,41
+Target: main,118,1336
+Target: v1.10,1,34
+Target: v2.0.x,5,115
+Target: v2.x,5,321
+Target: v3.0.x,11,524
+Target: v3.1.x,8,486
+Target: v4.0.x,28,711
+Target: v4.1.x,58,452
+Target: v5.0.x,80,622
+Target: v6.0.x,5,1
+test,3,1
+x-version compatibility,0,2
+😳 Backward compat break,5,10
