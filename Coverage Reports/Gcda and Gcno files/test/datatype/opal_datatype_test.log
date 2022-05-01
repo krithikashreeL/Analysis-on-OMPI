@@ -1,0 +1,282 @@
+[DESKTOP-MS6GFL8:19582] Datatype 0x55aba0e77340[] size 36000 align 8 id 0 length 6 used 1
+true_lb 0 true_ub 39592 (true_extent 39592) lb 0 ub 39592 (extent 39592)
+nbElems 4500 loops 0 flags 104 (committed )-c-----GD--[---][---]
+   contain OPAL_FLOAT8:* 
+--C---P-D--[---][---]    OPAL_FLOAT8 count 450 disp 0x0 (0) blen 10 extent 88 (size 36000)
+-------G---[---][---]    OPAL_LOOP_E prev 1 elements first elem displacement 0 size of data 36000
+Optimized description 
+-cC---P-DB-[---][---]    OPAL_FLOAT8 count 450 disp 0x0 (0) blen 10 extent 88 (size 36000)
+-------G---[---][---]    OPAL_LOOP_E prev 1 elements first elem displacement 0 size of data 36000
+
+
+
+#
+ * TEST CREATE CONTIGUOUS
+#
+
+direct local copy in 9 microsec
+Validation check successfully passed
+copying same data-type using convertors in 8 microsec
+	 unpack in 2 microsec [pack in 6 microsec]
+Validation check successfully passed
+
+
+#
+ * TEST STRANGE DATATYPE
+#
+
+
+Strange datatype BEFORE COMMIT
+
+Strange datatype AFTER COMMIT
+direct local copy in 3 microsec
+Validation check successfully passed
+copying same data-type using convertors in 5 microsec
+	 unpack in 1 microsec [pack in 4 microsec]
+Validation check successfully passed
+
+
+#
+ * TEST UPPER TRIANGULAR MATRIX (size 100)
+#
+
+direct local copy in 13 microsec
+Validation check successfully passed
+copying same data-type using convertors in 4789 microsec
+	 unpack in 631 microsec [pack in 4158 microsec]
+Validation check successfully passed
+
+
+#
+ * TEST UPPER MATRIX
+#
+
+complete unpacking in 251 microsec
+decode [PASSED]
+
+
+#
+ * TEST MATRIX BORDERS
+#
+
+
+
+#
+ * TEST CONTIGUOUS
+#
+
+test contiguous (alignment)
+
+
+#
+ * TEST STRUCT
+#
+
+test struct
+>>--------------------------------------------<<
+>>--------------------------------------------<<
+>>--------------------------------------------<<
+>>--------------------------------------------<<
+ Contiguous data-type (opal_datatype_float8)
+direct local copy in 6 microsec
+Validation check successfully passed
+copying same data-type using convertors in 4583 microsec
+	 unpack in 1923 microsec [pack in 2660 microsec]
+Validation check successfully passed
+copying different data-types using convertors in 5578 microsec
+	 unpack in 2234 microsec [pack in 3344 microsec]
+>>--------------------------------------------<<
+>>--------------------------------------------<<
+Contiguous multiple data-type (4500*1)
+direct local copy in 6 microsec
+Validation check successfully passed
+copying same data-type using convertors in 4678 microsec
+	 unpack in 2113 microsec [pack in 2565 microsec]
+Validation check successfully passed
+copying different data-types using convertors in 4351 microsec
+	 unpack in 1951 microsec [pack in 2400 microsec]
+Contiguous multiple data-type (450*10)
+direct local copy in 4 microsec
+Validation check successfully passed
+copying same data-type using convertors in 5281 microsec
+	 unpack in 1926 microsec [pack in 3355 microsec]
+Validation check successfully passed
+copying different data-types using convertors in 4335 microsec
+	 unpack in 1925 microsec [pack in 2410 microsec]
+Contiguous multiple data-type (45*100)
+direct local copy in 6 microsec
+Validation check successfully passed
+copying same data-type using convertors in 4619 microsec
+	 unpack in 1939 microsec [pack in 2680 microsec]
+Validation check successfully passed
+copying different data-types using convertors in 4649 microsec
+	 unpack in 2088 microsec [pack in 2561 microsec]
+Contiguous multiple data-type (100*45)
+direct local copy in 8 microsec
+Validation check successfully passed
+copying same data-type using convertors in 4503 microsec
+	 unpack in 1879 microsec [pack in 2624 microsec]
+Validation check successfully passed
+copying different data-types using convertors in 4302 microsec
+	 unpack in 1886 microsec [pack in 2416 microsec]
+Contiguous multiple data-type (10*450)
+direct local copy in 4 microsec
+Validation check successfully passed
+copying same data-type using convertors in 4849 microsec
+	 unpack in 1938 microsec [pack in 2911 microsec]
+Validation check successfully passed
+copying different data-types using convertors in 4342 microsec
+	 unpack in 1915 microsec [pack in 2427 microsec]
+Contiguous multiple data-type (1*4500)
+direct local copy in 5 microsec
+Validation check successfully passed
+copying same data-type using convertors in 4775 microsec
+	 unpack in 1923 microsec [pack in 2852 microsec]
+Validation check successfully passed
+copying different data-types using convertors in 4668 microsec
+	 unpack in 2152 microsec [pack in 2516 microsec]
+>>--------------------------------------------<<
+>>--------------------------------------------<<
+Vector data-type (450 times 10 double stride 11)
+direct local copy in 13 microsec
+Validation check successfully passed
+copying same data-type using[DESKTOP-MS6GFL8:19582] Datatype 0x55aba0e77340[] size 16 align 8 id 0 length 8 used 2
+true_lb 8 true_ub 24 (true_extent 16) lb 0 ub 24 (extent 24)
+nbElems 2 loops 0 flags 1D4 (committed contiguous )-cC-lu-GD--[---][---]
+   contain lb ub OPAL_FLOAT8:* 
+--C---P-D--[---][---]    OPAL_FLOAT8 count 1 disp 0x8 (8) blen 1 extent 8 (size 8)
+--C---P-D--[---][---]    OPAL_FLOAT8 count 1 disp 0x10 (16) blen 1 extent 8 (size 8)
+-------G---[---][---]    OPAL_LOOP_E prev 2 elements first elem displacement 8 size of data 16
+Optimized description 
+-cC---P-DB-[---][---]    OPAL_FLOAT8 count 1 disp 0x8 (8) blen 2 extent 16 (size 16)
+-------G---[---][---]    OPAL_LOOP_E prev 1 elements first elem displacement 8 size of data 16
+
+[DESKTOP-MS6GFL8:19582] Datatype 0x55aba0e79aa0[] size 624 align 4 id 0 length 55 used 18
+true_lb 1144 true_ub 2692 (true_extent 1548) lb 1144 ub 2692 (extent 1548)
+nbElems 156 loops 0 flags 104 (committed )-c-----GD--[---][---]
+   contain OPAL_INT4:* 
+--C---P-D--[---][---]      OPAL_INT4 count 1 disp 0x478 (1144) blen 13 extent 52 (size 52)
+--C---P-D--[---][---]      OPAL_INT4 count 1 disp 0x4d0 (1232) blen 13 extent 52 (size 52)
+--C---P-D--[---][---]      OPAL_INT4 count 1 disp 0x528 (1320) blen 13 extent 52 (size 52)
+--C---P-D--[---][---]      OPAL_INT4 count 1 disp 0x580 (1408) blen 13 extent 52 (size 52)
+--C---P-D--[---][---]      OPAL_INT4 count 1 disp 0x5d8 (1496) blen 13 extent 52 (size 52)
+--C---P-D--[---][---]      OPAL_INT4 count 1 disp 0x630 (1584) blen 13 extent 52 (size 52)
+--C---P-D--[---][---]      OPAL_INT4 count 1 disp 0x68c (1676) blen 12 extent 48 (size 48)
+--C---P-D--[---][---]      OPAL_INT4 count 1 disp 0x6e8 (1768) blen 11 extent 44 (size 44)
+--C---P-D--[---][---]      OPAL_INT4 count 1 disp 0x744 (1860) blen 10 extent 40 (size 40)
+--C---P-D--[---][---]      OPAL_INT4 count 1 disp 0x7a0 (1952) blen 9 extent 36 (size 36)
+--C---P-D--[---][---]      OPAL_INT4 count 1 disp 0x7fc (2044) blen 8 extent 32 (size 32)
+--C---P-D--[---][---]      OPAL_INT4 count 1 disp 0x858 (2136) blen 7 extent 28 (size 28)
+--C---P-D--[---][---]      OPAL_INT4 count 1 disp 0x8b4 (2228) blen 6 extent 24 (size 24)
+--C---P-D--[---][---]      OPAL_INT4 count 1 disp 0x910 (2320) blen 5 extent 20 (size 20)
+--C---P-D--[---][---]      OPAL_INT4 count 1 disp 0x96c (2412) blen 4 extent 16 (size 16)
+--C---P-D--[---][---]      OPAL_INT4 count 1 disp 0x9c8 (2504) blen 3 extent 12 (size 12)
+--C---P-D--[---][---]      OPAL_INT4 count 1 disp 0xa24 (2596) blen 2 extent 8 (size 8)
+--C---P-D--[---][---]      OPAL_INT4 count 1 disp 0xa80 (2688) blen 1 extent 4 (size 4)
+-------G---[---][---]    OPAL_LOOP_E prev 18 elements first elem displacement 1144 size of data 624
+Optimized description 
+-cC---P-DB-[---][---]      OPAL_INT4 count 6 disp 0x478 (1144) blen 13 extent 88 (size 312)
+-cC---P-DB-[---][---]      OPAL_INT4 count 1 disp 0x68c (1676) blen 12 extent 48 (size 48)
+-cC---P-DB-[---][---]      OPAL_INT4 count 1 disp 0x6e8 (1768) blen 11 extent 44 (size 44)
+-cC---P-DB-[---][---]      OPAL_INT4 count 1 disp 0x744 (1860) blen 10 extent 40 (size 40)
+-cC---P-DB-[---][---]      OPAL_INT4 count 1 disp 0x7a0 (1952) blen 9 extent 36 (size 36)
+-cC---P-DB-[---][---]      OPAL_INT4 count 1 disp 0x7fc (2044) blen 8 extent 32 (size 32)
+-cC---P-DB-[---][---]      OPAL_INT4 count 1 disp 0x858 (2136) blen 7 extent 28 (size 28)
+-cC---P-DB-[---][---]      OPAL_INT4 count 1 disp 0x8b4 (2228) blen 6 extent 24 (size 24)
+-cC---P-DB-[---][---]      OPAL_INT4 count 1 disp 0x910 (2320) blen 5 extent 20 (size 20)
+-cC---P-DB-[---][---]      OPAL_INT4 count 1 disp 0x96c (2412) blen 4 extent 16 (size 16)
+-cC---P-DB-[---][---]      OPAL_INT4 count 1 disp 0x9c8 (2504) blen 3 extent 12 (size 12)
+-cC---P-DB-[---][---]      OPAL_INT4 count 1 disp 0xa24 (2596) blen 2 extent 8 (size 8)
+-cC---P-DB-[---][---]      OPAL_INT4 count 1 disp 0xa80 (2688) blen 1 extent 4 (size 4)
+-------G---[---][---]    OPAL_LOOP_E prev 13 elements first elem displacement 1144 size of data 624
+
+ convertors in 9586 microsec
+	 unpack in 3316 microsec [pack in 6270 microsec]
+Validation check successfully passed
+copying different data-types using convertors in 9143 microsec
+	 unpack in 3342 microsec [pack in 5801 microsec]
+copying same data-type using convertors in 960 microsec
+	 unpack in 349 microsec [pack in 611 microsec]
+Validation check successfully passed
+copying different data-types using convertors in 940 microsec
+	 unpack in 348 microsec [pack in 592 microsec]
+copying same data-type using convertors in 30 microsec
+	 unpack in 14 microsec [pack in 16 microsec]
+Validation check successfully passed
+copying different data-types using convertors in 33 microsec
+	 unpack in 17 microsec [pack in 16 microsec]
+copying same data-type using convertors in 23 microsec
+	 unpack in 10 microsec [pack in 13 microsec]
+Validation check successfully passed
+copying different data-types using convertors in 24 microsec
+	 unpack in 11 microsec [pack in 13 microsec]
+>>--------------------------------------------<<
+>>--------------------------------------------<<
+Struct data-type resized (double unused followed by 2 used doubles)
+direct local copy in 4 microsec
+Validation check successfully passed
+WRONG !!! the send is finish but the receive is not finish in local_copy_with_convertor
+copying same data-type using convertors in 275 microsec
+	 unpack in 98 microsec [pack in 177 microsec]
+Validation check successfully passed
+WRONG !!! the send is finish but the receive is not finish in local_copy_with_convertor_2datatypes
+copying different data-types using convertors in 253 microsec
+	 unpack in 95 microsec [pack in 158 microsec]
+copying same data-type using convertors in 45 microsec
+	 unpack in 8 microsec [pack in 37 microsec]
+Validation check successfully passed
+copying different data-types using convertors in 39 microsec
+	 unpack in 17 microsec [pack in 22 microsec]
+copying same data-type using convertors in 115 microsec
+	 unpack in 86 microsec [pack in 29 microsec]
+Validation check successfully passed
+copying different data-types using convertors in 113 microsec
+	 unpack in 61 microsec [pack in 52 microsec]
+copying same data-type using convertors in 315 microsec
+	 unpack in 171 microsec [pack in 144 microsec]
+Validation check successfully passed
+copying different data-types using convertors in 535 microsec
+	 unpack in 255 microsec [pack in 280 microsec]
+>>--------------------------------------------<<
+>>--------------------------------------------<<
+direct local copy in 524 microsec
+Validation check successfully passed
+copying same data-type using convertors in 11662 microsec
+	 unpack in 4404 microsec [pack in 7258 microsec]
+Validation check successfully passed
+copying different data-types using convertors in 10606 microsec
+	 unpack in 4021 microsec [pack in 6585 microsec]
+>>--------------------------------------------<<
+>>--------------------------------------------<<
+direct local copy in 660 microsec
+Validation check successfully passed
+copying same data-type using convertors in 41161 microsec
+	 unpack in 14365 microsec [pack in 26796 microsec]
+Validation check successfully passed
+copying different data-types using convertors in 41462 microsec
+	 unpack in 14523 microsec [pack in 26939 microsec]
+>>--------------------------------------------<<
+>>--------------------------------------------<<
+direct local copy in 3827 microsec
+Validation check successfully passed
+copying same data-type using convertors in 25230 microsec
+	 unpack in 9980 microsec [pack in 15250 microsec]
+Validation check successfully passed
+copying different data-types using convertors in 17616 microsec
+	 unpack in 6964 microsec [pack in 10652 microsec]
+copying same data-type using convertors in 9864 microsec
+	 unpack in 4900 microsec [pack in 4964 microsec]
+Validation check successfully passed
+copying different data-types using convertors in 11035 microsec
+	 unpack in 5555 microsec [pack in 5480 microsec]
+copying same data-type using convertors in 9824 microsec
+	 unpack in 4519 microsec [pack in 5305 microsec]
+Validation check successfully passed
+copying different data-types using convertors in 10438 microsec
+	 unpack in 4086 microsec [pack in 6352 microsec]
+>>--------------------------------------------<<
+>>--------------------------------------------<<
+copying different data-types using convertors in 7 microsec
+	 unpack in 2 microsec [pack in 5 microsec]
+>>--------------------------------------------<<
+PASS opal_datatype_test (exit status: 0)

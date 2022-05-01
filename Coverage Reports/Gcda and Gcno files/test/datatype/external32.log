@@ -1,0 +1,11 @@
+packed 8 bytes into a 8 bytes buffer 
+ 00 00 04 d2   00 00 16 2e
+packed 4 bytes into a 4 bytes buffer 
+ 04 d2 16 2e
+
+
+Vector datatype
+
+packed 8 bytes into a 8 bytes buffer 
+ 00 00 04 d2   00 00 16 2e
+PASS external32 (exit status: 0)

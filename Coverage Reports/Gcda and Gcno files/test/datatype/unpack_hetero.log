@@ -1,0 +1,13 @@
+
+
+#
+ * TEST UNPACKING 1 int out of 1
+#
+
+
+
+#
+ * TEST UNPACKING 1 int out of 2
+#
+
+PASS unpack_hetero (exit status: 0)

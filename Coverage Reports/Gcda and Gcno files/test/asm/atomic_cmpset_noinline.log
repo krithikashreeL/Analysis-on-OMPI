@@ -1,0 +1,1 @@
+PASS atomic_cmpset_noinline (exit status: 0)

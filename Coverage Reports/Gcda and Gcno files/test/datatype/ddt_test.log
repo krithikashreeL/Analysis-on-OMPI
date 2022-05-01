@@ -1,0 +1,213 @@
+[DESKTOP-MS6GFL8:19677] Datatype 0x55687ce240f0[] id -1 size 36000 align 8 opal_id 0 length 6 used 1
+true_lb 0 true_ub 39592 (true_extent 39592) lb 0 ub 39592 (extent 39592)
+nbElems 4500 loops 0 flags 104 (committed )-c-----GD--[---][---]
+   contain OPAL_FLOAT8:* 
+--C---P-D--[---][---]    OPAL_FLOAT8 count 450 disp 0x0 (0) blen 10 extent 88 (size 36000)
+-------G---[---][---]    OPAL_LOOP_E prev 1 elements first elem displacement 0 size of data 36000
+Optimized description 
+-cC---P-DB-[---][---]    OPAL_FLOAT8 count 450 disp 0x0 (0) blen 10 extent 88 (size 36000)
+-------G---[---][---]    OPAL_LOOP_E prev 1 elements first elem displacement 0 size of data 36000
+
+
+
+#
+ * TEST INVERSED VECTOR
+ #
+
+direct local copy in 22 microsec
+copying same data-type using convertors in 53 microsec
+	 unpack in 25 microsec [pack in 28 microsec]
+
+
+#
+ * TEST STRANGE DATATYPE
+ #
+
+
+Strange datatype BEFORE COMMIT
+
+Strange datatype AFTER COMMIT
+direct local copy in 116 microsec
+copying same data-type using convertors in 28 microsec
+	 unpack in 13 microsec [pack in 15 microsec]
+
+
+#
+ * TEST UPPER TRIANGULAR MATRIX (size 100)
+ #
+
+direct local copy in 15 microsec
+copying same data-type using convertors in 1307 microsec
+	 unpack in 632 microsec [pack in 675 microsec]
+
+
+#
+ * TEST UPPER MATRIX
+ #
+
+test upper matrix
+complete unpacking in 234 microsec
+decode [PASSED]
+
+
+#
+ * TEST MATRIX BORDERS
+ #
+
+
+
+#
+ * TEST CONTIGUOUS
+ #
+
+test contiguous (alignment)
+
+
+#
+ * TEST STRUCT
+ #
+
+test struct
+>>--------------------------------------------<<
+>>--------------------------------------------<<
+>>--------------------------------------------<<
+>>--------------------------------------------<<
+ Contiguous data-type (MPI_DOUBLE)
+direct local copy in 8 microsec
+copying same data-type using convertors in 5632 microsec
+	 unpack in 2272 microsec [pack in 3360 microsec]
+copying different data-types using convertors in 4297 microsec
+	 unpack in 2130 microsec [pack in 2167 microsec]
+>>--------------------------------------------<<
+>>--------------------------------------------<<
+Contiguous multiple data-type (4500*1)
+direct local copy in 9 microsec
+copying same data-type using convertors in 4195 microsec
+	 unpack in 2054 microsec [pack in 2141 microsec]
+copying different data-types using convertors in 4303 microsec
+	 unpack in 2149 microsec [pack in 2154 microsec]
+Contiguous multiple data-type (450*10)
+direct local copy in 9 microsec
+copying same data-type using convertors in 6172 microsec
+	 unpack in 2673 microsec [pack in 3499 microsec]
+copying different data-types using convertors in 4218 microsec
+	 unpack in 2046 microsec [pack in 2172 microsec]
+Contiguous multiple data-type (45*100)
+direct local copy in 5 microsec
+copying same data-type using convertors in 7155 microsec
+	 unpack in 4588 microsec [pack in 2567 microsec]
+copying different data-types using convertors in 4228 microsec
+	 unpack in 2043 microsec [pack in 2185 microsec]
+Contiguous multiple data-type (100*45)
+direct local copy in 5 microsec
+copying same data-type using convertors in 4238 microsec
+	 unpack in 2081 microsec [pack in 2157 microsec]
+copying different data-types using convertors in 5329 microsec
+	 unpack in 2285 microsec [pack in 3044 microsec]
+Contiguous multiple data-type (10*450)
+direct local copy in 7 microsec
+copying same data-type using convertors in 4262 microsec
+	 unpack in 2045 microsec [pack in 2217 microsec]
+copying different data-types using convertors in 5333 microsec
+	 unpack in 2691 microsec [pack in 2642 microsec]
+Contiguous multiple data-type (1*4500)
+direct local copy in 8 microsec
+copying same data-type using convertors in 4378 microsec
+	 unpack in 2098 microsec [pack in 2280 microsec]
+copying different data-types using convertors in 4036 microsec
+	 unpack in 1951 microsec [pack in 2085 microsec]
+>>--------------------------------------------<<
+>>--------------------------------------------<<
+Vector data-type (450 times 10 double stride 11)
+direct local copy in 15 microsec
+copying same data-type using convertors in 8306 microsec
+	 unpack in 4196 microsec [pack in 4110 microsec]
+copying different data-types using convertors in 7121 microsec
+	 unpack in 3631 microsec [pack in 3490 microsec]
+copying same data-type using convertors in 926 microsec
+	 unpack in 452 microsec [pack in 474 microsec]
+copying different data-types using convertors in 1426 microsec
+	 unpack in 829 microsec [pack in 597 microsec]
+copying same data-type using convertors in 30 microsec
+	 unpack in 16 microsec [pack in 14 microsec]
+copying different data-types using convertors in 28 microsec
+	 unpack in 17 microsec [pack in 11 microsec]
+copying same data-type using convertors in 22 microsec
+	 unpack in 10 microsec [pack in 12 microsec]
+copying different data-types using conve[DESKTOP-MS6GFL8:19677] Datatype 0x55687ce23e10[] id -1 size 624 align 4 opal_id 0 length 55 used 18
+true_lb 1144 true_ub 2692 (true_extent 1548) lb 1144 ub 2692 (extent 1548)
+nbElems 156 loops 0 flags 104 (committed )-c-----GD--[---][---]
+   contain OPAL_INT4:* 
+--C---P-DH-[---][---]      OPAL_INT4 count 1 disp 0x478 (1144) blen 13 extent 52 (size 52)
+--C---P-DH-[---][---]      OPAL_INT4 count 1 disp 0x4d0 (1232) blen 13 extent 52 (size 52)
+--C---P-DH-[---][---]      OPAL_INT4 count 1 disp 0x528 (1320) blen 13 extent 52 (size 52)
+--C---P-DH-[---][---]      OPAL_INT4 count 1 disp 0x580 (1408) blen 13 extent 52 (size 52)
+--C---P-DH-[---][---]      OPAL_INT4 count 1 disp 0x5d8 (1496) blen 13 extent 52 (size 52)
+--C---P-DH-[---][---]      OPAL_INT4 count 1 disp 0x630 (1584) blen 13 extent 52 (size 52)
+--C---P-DH-[---][---]      OPAL_INT4 count 1 disp 0x68c (1676) blen 12 extent 48 (size 48)
+--C---P-DH-[---][---]      OPAL_INT4 count 1 disp 0x6e8 (1768) blen 11 extent 44 (size 44)
+--C---P-DH-[---][---]      OPAL_INT4 count 1 disp 0x744 (1860) blen 10 extent 40 (size 40)
+--C---P-DH-[---][---]      OPAL_INT4 count 1 disp 0x7a0 (1952) blen 9 extent 36 (size 36)
+--C---P-DH-[---][---]      OPAL_INT4 count 1 disp 0x7fc (2044) blen 8 extent 32 (size 32)
+--C---P-DH-[---][---]      OPAL_INT4 count 1 disp 0x858 (2136) blen 7 extent 28 (size 28)
+--C---P-DH-[---][---]      OPAL_INT4 count 1 disp 0x8b4 (2228) blen 6 extent 24 (size 24)
+--C---P-DH-[---][---]      OPAL_INT4 count 1 disp 0x910 (2320) blen 5 extent 20 (size 20)
+--C---P-DH-[---][---]      OPAL_INT4 count 1 disp 0x96c (2412) blen 4 extent 16 (size 16)
+--C---P-DH-[---][---]      OPAL_INT4 count 1 disp 0x9c8 (2504) blen 3 extent 12 (size 12)
+--C---P-DH-[---][---]      OPAL_INT4 count 1 disp 0xa24 (2596) blen 2 extent 8 (size 8)
+--C---P-DH-[---][---]      OPAL_INT4 count 1 disp 0xa80 (2688) blen 1 extent 4 (size 4)
+-------G---[---][---]    OPAL_LOOP_E prev 18 elements first elem displacement 1144 size of data 624
+Optimized description 
+-cC---P-DB-[---][---]      OPAL_INT4 count 6 disp 0x478 (1144) blen 13 extent 88 (size 312)
+-cC---P-DB-[---][---]      OPAL_INT4 count 1 disp 0x68c (1676) blen 12 extent 48 (size 48)
+-cC---P-DB-[---][---]      OPAL_INT4 count 1 disp 0x6e8 (1768) blen 11 extent 44 (size 44)
+-cC---P-DB-[---][---]      OPAL_INT4 count 1 disp 0x744 (1860) blen 10 extent 40 (size 40)
+-cC---P-DB-[---][---]      OPAL_INT4 count 1 disp 0x7a0 (1952) blen 9 extent 36 (size 36)
+-cC---P-DB-[---][---]      OPAL_INT4 count 1 disp 0x7fc (2044) blen 8 extent 32 (size 32)
+-cC---P-DB-[---][---]      OPAL_INT4 count 1 disp 0x858 (2136) blen 7 extent 28 (size 28)
+-cC---P-DB-[---][---]      OPAL_INT4 count 1 disp 0x8b4 (2228) blen 6 extent 24 (size 24)
+-cC---P-DB-[---][---]      OPAL_INT4 count 1 disp 0x910 (2320) blen 5 extent 20 (size 20)
+-cC---P-DB-[---][---]      OPAL_INT4 count 1 disp 0x96c (2412) blen 4 extent 16 (size 16)
+-cC---P-DB-[---][---]      OPAL_INT4 count 1 disp 0x9c8 (2504) blen 3 extent 12 (size 12)
+-cC---P-DB-[---][---]      OPAL_INT4 count 1 disp 0xa24 (2596) blen 2 extent 8 (size 8)
+-cC---P-DB-[---][---]      OPAL_INT4 count 1 disp 0xa80 (2688) blen 1 extent 4 (size 4)
+-------G---[---][---]    OPAL_LOOP_E prev 13 elements first elem displacement 1144 size of data 624
+
+rtors in 24 microsec
+	 unpack in 13 microsec [pack in 11 microsec]
+>>--------------------------------------------<<
+>>--------------------------------------------<<
+direct local copy in 624 microsec
+copying same data-type using convertors in 13198 microsec
+	 unpack in 6164 microsec [pack in 7034 microsec]
+copying different data-types using convertors in 10080 microsec
+	 unpack in 4890 microsec [pack in 5190 microsec]
+>>--------------------------------------------<<
+>>--------------------------------------------<<
+direct local copy in 490 microsec
+copying same data-type using convertors in 34823 microsec
+	 unpack in 17855 microsec [pack in 16968 microsec]
+copying different data-types using convertors in 33409 microsec
+	 unpack in 16066 microsec [pack in 17343 microsec]
+>>--------------------------------------------<<
+>>--------------------------------------------<<
+direct local copy in 6 microsec
+direct local copy in 3859 microsec
+copying same data-type using convertors in 14774 microsec
+	 unpack in 7160 microsec [pack in 7614 microsec]
+copying different data-types using convertors in 11446 microsec
+	 unpack in 5953 microsec [pack in 5493 microsec]
+copying same data-type using convertors in 9986 microsec
+	 unpack in 5290 microsec [pack in 4696 microsec]
+copying different data-types using convertors in 8557 microsec
+	 unpack in 4569 microsec [pack in 3988 microsec]
+copying same data-type using convertors in 11074 microsec
+	 unpack in 5396 microsec [pack in 5678 microsec]
+copying different data-types using convertors in 8081 microsec
+	 unpack in 3973 microsec [pack in 4108 microsec]
+>>--------------------------------------------<<
+>>--------------------------------------------<<
+copying different data-types using convertors in 7 microsec
+	 unpack in 2 microsec [pack in 5 microsec]
+>>--------------------------------------------<<
+PASS ddt_test (exit status: 0)

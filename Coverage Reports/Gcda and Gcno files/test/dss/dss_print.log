@@ -1,0 +1,48 @@
+--------------------------------------------------------------------------
+Sorry!  You were supposed to get help about:
+    opal_init:startup:internal-failure
+But I couldn't open the help file:
+    /usr/local/share/openmpi/help-opal-runtime.txt: No such file or directory.  Sorry!
+--------------------------------------------------------------------------
+executing test1
+opal_dss.print output for signed value:  Data type: OPAL_INT8	Value: -100
+opal_dss.print output for unsigned value:  Data type: OPAL_UINT8	Value: 150
+Test1 succeeded
+executing test2
+opal_dss.print output for signed value:  Data type: OPAL_INT16	Value: -100
+opal_dss.print output for unsigned value:  Data type: OPAL_UINT16	Value: 150
+Test2 succeeded
+executing test3
+opal_dss.print output for signed value:  Data type: OPAL_INT32	Value: -100
+opal_dss.print output for unsigned value:  Data type: OPAL_UINT32	Value: 150
+Test3 succeeded
+executing test4
+opal_dss.print output for signed value:  Data type: OPAL_INT64	Value: -100
+opal_dss.print output for unsigned value:  Data type: OPAL_UINT64	Value: 150
+Test4 succeeded
+executing test5
+opal_dss.print output for signed value:  Data type: OPAL_INT	Value: -100
+opal_dss.print output for unsigned value:  Data type: OPAL_UINT	Value: 150
+Test5 succeeded
+executing test6
+opal_dss.print output for string:  Data type: OPAL_STRING	Value: This is a short string
+Test6 succeeded
+executing test7
+opal_dss.print output for bool:  Data type: OPAL_BOOL	Value: TRUE
+Test7 succeeded
+executing test8
+opal_dss.print output for size:  Data type: OPAL_SIZE	Value: 100
+Test8 succeeded
+executing test9
+opal_dss.print output for pid:  Data type: OPAL_PID	Value: 100
+Test9 succeeded
+executing test11
+opal_dss.print output for data type:  Data type: OPAL_DATA_TYPE	Value: 100
+Test11 succeeded
+executing test12
+opal_dss.print output for byte object:  Data type: OPAL_BYTE_OBJECT	Size: 20
+Test12 succeeded
+executing test13
+opal_dss.print output for data value:  OPAL_VALUE: Data type: OPAL_INT	Key: key	Value: 200
+Test13 succeeded
+PASS dss_print (exit status: 0)

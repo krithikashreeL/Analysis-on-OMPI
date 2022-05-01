@@ -1,0 +1,45 @@
+================================ 
+This is suppossed to throw error 
+================================ 
+ERROR: Initialization of bitmap failed
+
+================================ 
+This is suppossed to throw error 
+================================ 
+ERROR: Initialization of bitmap failed 
+
+
+Testing bitmap set... 
+================================ 
+This is suppossed to throw error 
+================================ 
+ERROR: set_bit for bit = -1
+
+
+Testing bitmap clear ... 
+================================ 
+This is suppossed to throw error 
+================================ 
+ERROR: clear_bit for bit = -1 
+
+================================ 
+This is suppossed to throw error 
+================================ 
+ERROR: clear_bit for bit = 142 
+
+
+Testing bitmap is_set ... 
+================================ 
+This is suppossed to throw error 
+================================ 
+ERROR: set_bit for bit = -1
+
+
+Testing bitmap clear_all... 
+
+Testing bitmap set_all... 
+
+Testing bitmap find_and_set... 
+
+~~~~~~     Testing complete     ~~~~~~ 
+

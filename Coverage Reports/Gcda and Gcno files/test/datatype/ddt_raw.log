@@ -1,0 +1,92 @@
+
+
+#
+ * TEST INVERSED VECTOR
+ #
+
+raw extraction in 78 microsec
+
+
+#
+ * TEST STRANGE DATATYPE
+ #
+
+
+Strange datatype BEFORE COMMIT
+
+Strange datatype AFTER COMMIT
+raw extraction in 46 microsec
+
+
+#
+ * TEST UPPER TRIANGULAR MATRIX (size 100)
+ #
+
+raw extraction in 9 microsec
+
+
+#
+ * TEST UPPER MATRIX
+ #
+
+test upper matrix
+complete raw in 51 microsec
+decode [PASSED]
+
+
+#
+ * TEST MATRIX BORDERS
+ #
+
+
+
+#
+ * TEST CONTIGUOUS
+ #
+
+test contiguous (alignment)
+
+
+#
+ * TEST STRUCT
+ #
+
+test struct
+>>--------------------------------------------<<
+>>--------------------------------------------<<
+>>--------------------------------------------<<
+>>--------------------------------------------<<
+ Contiguous datatype (MPI_DOUBLE)
+raw extraction in 1 microsec
+>>--------------------------------------------<<
+>>--------------------------------------------<<
+Contiguous multiple datatype (4500*1)
+raw extraction in 1 microsec
+Contiguous multiple datatype (450*10)
+raw extraction in 1 microsec
+Contiguous multiple datatype (45*100)
+raw extraction in 1 microsec
+Contiguous multiple datatype (100*45)
+raw extraction in 0 microsec
+Contiguous multiple datatype (10*450)
+raw extraction in 1 microsec
+Contiguous multiple datatype (1*4500)
+raw extraction in 1 microsec
+>>--------------------------------------------<<
+>>--------------------------------------------<<
+Vector datatype (450 times 10 double stride 11)
+raw extraction in 37 microsec
+>>--------------------------------------------<<
+>>--------------------------------------------<<
+raw extraction in 969 microsec
+>>--------------------------------------------<<
+>>--------------------------------------------<<
+raw extraction in 826 microsec
+>>--------------------------------------------<<
+>>--------------------------------------------<<
+raw extraction in 7662 microsec
+>>--------------------------------------------<<
+>>--------------------------------------------<<
+raw extraction in 1 microsec
+>>--------------------------------------------<<
+PASS ddt_raw (exit status: 0)

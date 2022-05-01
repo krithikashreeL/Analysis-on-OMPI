@@ -1,0 +1,418 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - main_coverage.info - ompi/mca/coll/base/coll_base_alltoallv.c</title>
+  <link rel="stylesheet" type="text/css" href="../../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../../index.html">top level</a> - <a href="index.html">ompi/mca/coll/base</a> - coll_base_alltoallv.c<span style="font-size: 80%;"> (source / <a href="coll_base_alltoallv.c.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">main_coverage.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">114</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2022-04-27 17:59:59</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">3</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr><td><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /* -*- Mode: C; c-basic-offset:4 ; indent-tabs-mode:nil -*- */</a>
+<a name="2"><span class="lineNum">       2 </span>            : /*</a>
+<a name="3"><span class="lineNum">       3 </span>            :  * Copyright (c) 2004-2005 The Trustees of Indiana University and Indiana</a>
+<a name="4"><span class="lineNum">       4 </span>            :  *                         University Research and Technology</a>
+<a name="5"><span class="lineNum">       5 </span>            :  *                         Corporation.  All rights reserved.</a>
+<a name="6"><span class="lineNum">       6 </span>            :  * Copyright (c) 2004-2021 The University of Tennessee and The University</a>
+<a name="7"><span class="lineNum">       7 </span>            :  *                         of Tennessee Research Foundation.  All rights</a>
+<a name="8"><span class="lineNum">       8 </span>            :  *                         reserved.</a>
+<a name="9"><span class="lineNum">       9 </span>            :  * Copyright (c) 2004-2005 High Performance Computing Center Stuttgart,</a>
+<a name="10"><span class="lineNum">      10 </span>            :  *                         University of Stuttgart.  All rights reserved.</a>
+<a name="11"><span class="lineNum">      11 </span>            :  * Copyright (c) 2004-2005 The Regents of the University of California.</a>
+<a name="12"><span class="lineNum">      12 </span>            :  *                         All rights reserved.</a>
+<a name="13"><span class="lineNum">      13 </span>            :  * Copyright (c) 2008      Sun Microsystems, Inc.  All rights reserved.</a>
+<a name="14"><span class="lineNum">      14 </span>            :  * Copyright (c) 2013      Los Alamos National Security, LLC. All Rights</a>
+<a name="15"><span class="lineNum">      15 </span>            :  *                         reserved.</a>
+<a name="16"><span class="lineNum">      16 </span>            :  * Copyright (c) 2013      FUJITSU LIMITED.  All rights reserved.</a>
+<a name="17"><span class="lineNum">      17 </span>            :  * Copyright (c) 2014-2017 Research Organization for Information Science</a>
+<a name="18"><span class="lineNum">      18 </span>            :  *                         and Technology (RIST). All rights reserved.</a>
+<a name="19"><span class="lineNum">      19 </span>            :  * Copyright (c) 2017      IBM Corporation. All rights reserved.</a>
+<a name="20"><span class="lineNum">      20 </span>            :  * Copyright (c) 2021      Amazon.com, Inc. or its affiliates.  All Rights</a>
+<a name="21"><span class="lineNum">      21 </span>            :  *                         reserved.</a>
+<a name="22"><span class="lineNum">      22 </span>            :  * $COPYRIGHT$</a>
+<a name="23"><span class="lineNum">      23 </span>            :  *</a>
+<a name="24"><span class="lineNum">      24 </span>            :  * Additional copyrights may follow</a>
+<a name="25"><span class="lineNum">      25 </span>            :  *</a>
+<a name="26"><span class="lineNum">      26 </span>            :  * $HEADER$</a>
+<a name="27"><span class="lineNum">      27 </span>            :  */</a>
+<a name="28"><span class="lineNum">      28 </span>            : </a>
+<a name="29"><span class="lineNum">      29 </span>            : #include &quot;ompi_config.h&quot;</a>
+<a name="30"><span class="lineNum">      30 </span>            : </a>
+<a name="31"><span class="lineNum">      31 </span>            : #include &quot;mpi.h&quot;</a>
+<a name="32"><span class="lineNum">      32 </span>            : #include &quot;ompi/constants.h&quot;</a>
+<a name="33"><span class="lineNum">      33 </span>            : #include &quot;ompi/datatype/ompi_datatype.h&quot;</a>
+<a name="34"><span class="lineNum">      34 </span>            : #include &quot;opal/datatype/opal_convertor_internal.h&quot;</a>
+<a name="35"><span class="lineNum">      35 </span>            : #include &quot;ompi/communicator/communicator.h&quot;</a>
+<a name="36"><span class="lineNum">      36 </span>            : #include &quot;ompi/mca/coll/coll.h&quot;</a>
+<a name="37"><span class="lineNum">      37 </span>            : #include &quot;ompi/mca/coll/base/coll_tags.h&quot;</a>
+<a name="38"><span class="lineNum">      38 </span>            : #include &quot;ompi/mca/pml/pml.h&quot;</a>
+<a name="39"><span class="lineNum">      39 </span>            : #include &quot;ompi/mca/coll/base/coll_base_functions.h&quot;</a>
+<a name="40"><span class="lineNum">      40 </span>            : #include &quot;coll_base_topo.h&quot;</a>
+<a name="41"><span class="lineNum">      41 </span>            : #include &quot;coll_base_util.h&quot;</a>
+<a name="42"><span class="lineNum">      42 </span>            : </a>
+<a name="43"><span class="lineNum">      43 </span>            : /*</a>
+<a name="44"><span class="lineNum">      44 </span>            :  * We want to minimize the amount of temporary memory needed while allowing as many ranks</a>
+<a name="45"><span class="lineNum">      45 </span>            :  * to exchange data simultaneously. We use a variation of the ring algorithm, where in a</a>
+<a name="46"><span class="lineNum">      46 </span>            :  * single step a process exchange the data with both neighbors at distance k (on the left</a>
+<a name="47"><span class="lineNum">      47 </span>            :  * and the right on a logical ring topology). With this approach we need to pack the data</a>
+<a name="48"><span class="lineNum">      48 </span>            :  * for a single of the two neighbors, as we can then use the original buffer (and datatype</a>
+<a name="49"><span class="lineNum">      49 </span>            :  * and count) to send the data to the other.</a>
+<a name="50"><span class="lineNum">      50 </span>            :  */</a>
+<a name="51"><span class="lineNum">      51 </span>            : int</a>
+<a name="52"><span class="lineNum">      52 </span><span class="lineNoCov">          0 : mca_coll_base_alltoallv_intra_basic_inplace(const void *rbuf, const int *rcounts, const int *rdisps,</span></a>
+<a name="53"><span class="lineNum">      53 </span>            :                                             struct ompi_datatype_t *rdtype,</a>
+<a name="54"><span class="lineNum">      54 </span>            :                                             struct ompi_communicator_t *comm,</a>
+<a name="55"><span class="lineNum">      55 </span>            :                                             mca_coll_base_module_t *module)</a>
+<a name="56"><span class="lineNum">      56 </span>            : {</a>
+<a name="57"><span class="lineNum">      57 </span><span class="lineNoCov">          0 :     int i, size, rank, left, right, err = MPI_SUCCESS, line;</span></a>
+<a name="58"><span class="lineNum">      58 </span>            :     ptrdiff_t extent;</a>
+<a name="59"><span class="lineNum">      59 </span><span class="lineNoCov">          0 :     ompi_request_t *req = MPI_REQUEST_NULL;</span></a>
+<a name="60"><span class="lineNum">      60 </span>            :     char *tmp_buffer;</a>
+<a name="61"><span class="lineNum">      61 </span><span class="lineNoCov">          0 :     size_t packed_size = 0, max_size, type_size;</span></a>
+<a name="62"><span class="lineNum">      62 </span>            :     opal_convertor_t convertor;</a>
+<a name="63"><span class="lineNum">      63 </span>            : </a>
+<a name="64"><span class="lineNum">      64 </span>            :     /* Initialize. */</a>
+<a name="65"><span class="lineNum">      65 </span>            : </a>
+<a name="66"><span class="lineNum">      66 </span><span class="lineNoCov">          0 :     size = ompi_comm_size(comm);</span></a>
+<a name="67"><span class="lineNum">      67 </span><span class="lineNoCov">          0 :     rank = ompi_comm_rank(comm);</span></a>
+<a name="68"><span class="lineNum">      68 </span><span class="lineNoCov">          0 :     ompi_datatype_type_size(rdtype, &amp;type_size);</span></a>
+<a name="69"><span class="lineNum">      69 </span>            : </a>
+<a name="70"><span class="lineNum">      70 </span><span class="lineNoCov">          0 :     for (i = 0, max_size = 0 ; i &lt; size ; ++i) {</span></a>
+<a name="71"><span class="lineNum">      71 </span><span class="lineNoCov">          0 :         if (i == rank) {</span></a>
+<a name="72"><span class="lineNum">      72 </span><span class="lineNoCov">          0 :             continue;</span></a>
+<a name="73"><span class="lineNum">      73 </span>            :         }</a>
+<a name="74"><span class="lineNum">      74 </span><span class="lineNoCov">          0 :         packed_size = rcounts[i] * type_size;</span></a>
+<a name="75"><span class="lineNum">      75 </span><span class="lineNoCov">          0 :         max_size = packed_size &gt; max_size ? packed_size : max_size;</span></a>
+<a name="76"><span class="lineNum">      76 </span>            :     }</a>
+<a name="77"><span class="lineNum">      77 </span>            : </a>
+<a name="78"><span class="lineNum">      78 </span>            :     /* Easy way out */</a>
+<a name="79"><span class="lineNum">      79 </span><span class="lineNoCov">          0 :     if ((1 == size) || (0 == max_size) ) {</span></a>
+<a name="80"><span class="lineNum">      80 </span><span class="lineNoCov">          0 :         return MPI_SUCCESS;</span></a>
+<a name="81"><span class="lineNum">      81 </span>            :     }</a>
+<a name="82"><span class="lineNum">      82 </span>            : </a>
+<a name="83"><span class="lineNum">      83 </span>            :     /* Find the largest amount of packed send/recv data among all peers where</a>
+<a name="84"><span class="lineNum">      84 </span>            :      * we need to pack before the send.</a>
+<a name="85"><span class="lineNum">      85 </span>            :      */</a>
+<a name="86"><span class="lineNum">      86 </span>            : #if OPAL_ENABLE_HETEROGENEOUS_SUPPORT</a>
+<a name="87"><span class="lineNum">      87 </span>            :     for (i = 1 ; i &lt;= (size &gt;&gt; 1) ; ++i) {</a>
+<a name="88"><span class="lineNum">      88 </span>            :         right = (rank + i) % size;</a>
+<a name="89"><span class="lineNum">      89 </span>            :         ompi_proc_t *ompi_proc = ompi_comm_peer_lookup(comm, right);</a>
+<a name="90"><span class="lineNum">      90 </span>            : </a>
+<a name="91"><span class="lineNum">      91 </span>            :         if( OPAL_UNLIKELY(opal_local_arch != ompi_proc-&gt;super.proc_convertor-&gt;master-&gt;remote_arch))  {</a>
+<a name="92"><span class="lineNum">      92 </span>            :             packed_size = opal_datatype_compute_remote_size(&amp;rdtype-&gt;super,</a>
+<a name="93"><span class="lineNum">      93 </span>            :                                                             ompi_proc-&gt;super.proc_convertor-&gt;master-&gt;remote_sizes);</a>
+<a name="94"><span class="lineNum">      94 </span>            :             packed_size *= rcounts[right];</a>
+<a name="95"><span class="lineNum">      95 </span>            :             max_size = packed_size &gt; max_size ? packed_size : max_size;</a>
+<a name="96"><span class="lineNum">      96 </span>            :         }</a>
+<a name="97"><span class="lineNum">      97 </span>            :     }</a>
+<a name="98"><span class="lineNum">      98 </span>            : #endif  /* OPAL_ENABLE_HETEROGENEOUS_SUPPORT */</a>
+<a name="99"><span class="lineNum">      99 </span>            : </a>
+<a name="100"><span class="lineNum">     100 </span><span class="lineNoCov">          0 :     ompi_datatype_type_extent(rdtype, &amp;extent);</span></a>
+<a name="101"><span class="lineNum">     101 </span>            : </a>
+<a name="102"><span class="lineNum">     102 </span>            :     /* Allocate a temporary buffer */</a>
+<a name="103"><span class="lineNum">     103 </span><span class="lineNoCov">          0 :     tmp_buffer = calloc (max_size, 1);</span></a>
+<a name="104"><span class="lineNum">     104 </span><span class="lineNoCov">          0 :     if( NULL == tmp_buffer) { err = OMPI_ERR_OUT_OF_RESOURCE; line = __LINE__; goto error_hndl; }</span></a>
+<a name="105"><span class="lineNum">     105 </span>            : </a>
+<a name="106"><span class="lineNum">     106 </span><span class="lineNoCov">          0 :     for (i = 1 ; i &lt;= (size &gt;&gt; 1) ; ++i) {</span></a>
+<a name="107"><span class="lineNum">     107 </span><span class="lineNoCov">          0 :         struct iovec iov = {.iov_base = tmp_buffer, .iov_len = max_size};</span></a>
+<a name="108"><span class="lineNum">     108 </span><span class="lineNoCov">          0 :         uint32_t iov_count = 1;</span></a>
+<a name="109"><span class="lineNum">     109 </span>            : </a>
+<a name="110"><span class="lineNum">     110 </span><span class="lineNoCov">          0 :         right = (rank + i) % size;</span></a>
+<a name="111"><span class="lineNum">     111 </span><span class="lineNoCov">          0 :         left  = (rank + size - i) % size;</span></a>
+<a name="112"><span class="lineNum">     112 </span>            : </a>
+<a name="113"><span class="lineNum">     113 </span><span class="lineNoCov">          0 :         if( 0 != rcounts[right] ) {  /* nothing to exchange with the peer on the right */</span></a>
+<a name="114"><span class="lineNum">     114 </span><span class="lineNoCov">          0 :             ompi_proc_t *right_proc = ompi_comm_peer_lookup(comm, right);</span></a>
+<a name="115"><span class="lineNum">     115 </span><span class="lineNoCov">          0 :             opal_convertor_clone(right_proc-&gt;super.proc_convertor, &amp;convertor, 0);</span></a>
+<a name="116"><span class="lineNum">     116 </span><span class="lineNoCov">          0 :             opal_convertor_prepare_for_send(&amp;convertor, &amp;rdtype-&gt;super, rcounts[right],</span></a>
+<a name="117"><span class="lineNum">     117 </span><span class="lineNoCov">          0 :                                             (char *) rbuf + rdisps[right] * extent);</span></a>
+<a name="118"><span class="lineNum">     118 </span><span class="lineNoCov">          0 :             packed_size = max_size;</span></a>
+<a name="119"><span class="lineNum">     119 </span><span class="lineNoCov">          0 :             err = opal_convertor_pack(&amp;convertor, &amp;iov, &amp;iov_count, &amp;packed_size);</span></a>
+<a name="120"><span class="lineNum">     120 </span><span class="lineNoCov">          0 :             if (1 != err) { goto error_hndl; }</span></a>
+<a name="121"><span class="lineNum">     121 </span>            : </a>
+<a name="122"><span class="lineNum">     122 </span>            :             /* Receive data from the right */</a>
+<a name="123"><span class="lineNum">     123 </span><span class="lineNoCov">          0 :             err = MCA_PML_CALL(irecv ((char *) rbuf + rdisps[right] * extent, rcounts[right], rdtype,</span></a>
+<a name="124"><span class="lineNum">     124 </span>            :                                       right, MCA_COLL_BASE_TAG_ALLTOALLV, comm, &amp;req));</a>
+<a name="125"><span class="lineNum">     125 </span><span class="lineNoCov">          0 :             if (MPI_SUCCESS != err) { goto error_hndl; }</span></a>
+<a name="126"><span class="lineNum">     126 </span>            :         }</a>
+<a name="127"><span class="lineNum">     127 </span>            : </a>
+<a name="128"><span class="lineNum">     128 </span><span class="lineNoCov">          0 :         if( (left != right) &amp;&amp; (0 != rcounts[left]) ) {</span></a>
+<a name="129"><span class="lineNum">     129 </span>            :             /* Send data to the left */</a>
+<a name="130"><span class="lineNum">     130 </span><span class="lineNoCov">          0 :             err = MCA_PML_CALL(send ((char *) rbuf + rdisps[left] * extent, rcounts[left], rdtype,</span></a>
+<a name="131"><span class="lineNum">     131 </span>            :                                      left, MCA_COLL_BASE_TAG_ALLTOALLV, MCA_PML_BASE_SEND_STANDARD,</a>
+<a name="132"><span class="lineNum">     132 </span>            :                                      comm));</a>
+<a name="133"><span class="lineNum">     133 </span><span class="lineNoCov">          0 :             if (MPI_SUCCESS != err) { goto error_hndl; }</span></a>
+<a name="134"><span class="lineNum">     134 </span>            : </a>
+<a name="135"><span class="lineNum">     135 </span><span class="lineNoCov">          0 :             err = ompi_request_wait (&amp;req, MPI_STATUSES_IGNORE);</span></a>
+<a name="136"><span class="lineNum">     136 </span><span class="lineNoCov">          0 :             if (MPI_SUCCESS != err) { goto error_hndl; }</span></a>
+<a name="137"><span class="lineNum">     137 </span>            : </a>
+<a name="138"><span class="lineNum">     138 </span>            :             /* Receive data from the left */</a>
+<a name="139"><span class="lineNum">     139 </span><span class="lineNoCov">          0 :             err = MCA_PML_CALL(irecv ((char *) rbuf + rdisps[left] * extent, rcounts[left], rdtype,</span></a>
+<a name="140"><span class="lineNum">     140 </span>            :                                       left, MCA_COLL_BASE_TAG_ALLTOALLV, comm, &amp;req));</a>
+<a name="141"><span class="lineNum">     141 </span><span class="lineNoCov">          0 :             if (MPI_SUCCESS != err) { goto error_hndl; }</span></a>
+<a name="142"><span class="lineNum">     142 </span>            :         }</a>
+<a name="143"><span class="lineNum">     143 </span>            : </a>
+<a name="144"><span class="lineNum">     144 </span><span class="lineNoCov">          0 :         if( 0 != rcounts[right] ) {  /* nothing to exchange with the peer on the right */</span></a>
+<a name="145"><span class="lineNum">     145 </span>            :             /* Send data to the right */</a>
+<a name="146"><span class="lineNum">     146 </span><span class="lineNoCov">          0 :             err = MCA_PML_CALL(send ((char *) tmp_buffer,  packed_size, MPI_PACKED,</span></a>
+<a name="147"><span class="lineNum">     147 </span>            :                                      right, MCA_COLL_BASE_TAG_ALLTOALLV, MCA_PML_BASE_SEND_STANDARD,</a>
+<a name="148"><span class="lineNum">     148 </span>            :                                      comm));</a>
+<a name="149"><span class="lineNum">     149 </span><span class="lineNoCov">          0 :             if (MPI_SUCCESS != err) { goto error_hndl; }</span></a>
+<a name="150"><span class="lineNum">     150 </span>            :         }</a>
+<a name="151"><span class="lineNum">     151 </span>            : </a>
+<a name="152"><span class="lineNum">     152 </span><span class="lineNoCov">          0 :         err = ompi_request_wait (&amp;req, MPI_STATUSES_IGNORE);</span></a>
+<a name="153"><span class="lineNum">     153 </span><span class="lineNoCov">          0 :         if (MPI_SUCCESS != err) { goto error_hndl; }</span></a>
+<a name="154"><span class="lineNum">     154 </span>            :     }</a>
+<a name="155"><span class="lineNum">     155 </span>            : </a>
+<a name="156"><span class="lineNum">     156 </span><span class="lineNoCov">          0 :  error_hndl:</span></a>
+<a name="157"><span class="lineNum">     157 </span>            :     /* Free the temporary buffer */</a>
+<a name="158"><span class="lineNum">     158 </span><span class="lineNoCov">          0 :     if( NULL != tmp_buffer )</span></a>
+<a name="159"><span class="lineNum">     159 </span><span class="lineNoCov">          0 :         free (tmp_buffer);</span></a>
+<a name="160"><span class="lineNum">     160 </span>            : </a>
+<a name="161"><span class="lineNum">     161 </span>            :     if( MPI_SUCCESS != err ) {</a>
+<a name="162"><span class="lineNum">     162 </span>            :         OPAL_OUTPUT((ompi_coll_base_framework.framework_output,</a>
+<a name="163"><span class="lineNum">     163 </span>            :                      &quot;%s:%4d\tError occurred %d, rank %2d&quot;, __FILE__, line, err,</a>
+<a name="164"><span class="lineNum">     164 </span>            :                      rank));</a>
+<a name="165"><span class="lineNum">     165 </span>            :         (void)line;  // silence compiler warning</a>
+<a name="166"><span class="lineNum">     166 </span>            :     }</a>
+<a name="167"><span class="lineNum">     167 </span>            : </a>
+<a name="168"><span class="lineNum">     168 </span>            :     /* All done */</a>
+<a name="169"><span class="lineNum">     169 </span><span class="lineNoCov">          0 :     return err;</span></a>
+<a name="170"><span class="lineNum">     170 </span>            : }</a>
+<a name="171"><span class="lineNum">     171 </span>            : </a>
+<a name="172"><span class="lineNum">     172 </span>            : int</a>
+<a name="173"><span class="lineNum">     173 </span><span class="lineNoCov">          0 : ompi_coll_base_alltoallv_intra_pairwise(const void *sbuf, const int *scounts, const int *sdisps,</span></a>
+<a name="174"><span class="lineNum">     174 </span>            :                                          struct ompi_datatype_t *sdtype,</a>
+<a name="175"><span class="lineNum">     175 </span>            :                                          void* rbuf, const int *rcounts, const int *rdisps,</a>
+<a name="176"><span class="lineNum">     176 </span>            :                                          struct ompi_datatype_t *rdtype,</a>
+<a name="177"><span class="lineNum">     177 </span>            :                                          struct ompi_communicator_t *comm,</a>
+<a name="178"><span class="lineNum">     178 </span>            :                                          mca_coll_base_module_t *module)</a>
+<a name="179"><span class="lineNum">     179 </span>            : {</a>
+<a name="180"><span class="lineNum">     180 </span><span class="lineNoCov">          0 :     int line = -1, err = 0, rank, size, step = 0, sendto, recvfrom;</span></a>
+<a name="181"><span class="lineNum">     181 </span>            :     void *psnd, *prcv;</a>
+<a name="182"><span class="lineNum">     182 </span>            :     ptrdiff_t sext, rext;</a>
+<a name="183"><span class="lineNum">     183 </span>            : </a>
+<a name="184"><span class="lineNum">     184 </span><span class="lineNoCov">          0 :     if (MPI_IN_PLACE == sbuf) {</span></a>
+<a name="185"><span class="lineNum">     185 </span><span class="lineNoCov">          0 :         return mca_coll_base_alltoallv_intra_basic_inplace (rbuf, rcounts, rdisps,</span></a>
+<a name="186"><span class="lineNum">     186 </span>            :                                                              rdtype, comm, module);</a>
+<a name="187"><span class="lineNum">     187 </span>            :     }</a>
+<a name="188"><span class="lineNum">     188 </span>            : </a>
+<a name="189"><span class="lineNum">     189 </span><span class="lineNoCov">          0 :     size = ompi_comm_size(comm);</span></a>
+<a name="190"><span class="lineNum">     190 </span><span class="lineNoCov">          0 :     rank = ompi_comm_rank(comm);</span></a>
+<a name="191"><span class="lineNum">     191 </span>            : </a>
+<a name="192"><span class="lineNum">     192 </span>            :     OPAL_OUTPUT((ompi_coll_base_framework.framework_output,</a>
+<a name="193"><span class="lineNum">     193 </span>            :                  &quot;coll:base:alltoallv_intra_pairwise rank %d&quot;, rank));</a>
+<a name="194"><span class="lineNum">     194 </span>            : </a>
+<a name="195"><span class="lineNum">     195 </span><span class="lineNoCov">          0 :     ompi_datatype_type_extent(sdtype, &amp;sext);</span></a>
+<a name="196"><span class="lineNum">     196 </span><span class="lineNoCov">          0 :     ompi_datatype_type_extent(rdtype, &amp;rext);</span></a>
+<a name="197"><span class="lineNum">     197 </span>            : </a>
+<a name="198"><span class="lineNum">     198 </span>            :    /* Perform pairwise exchange starting from 1 since local exhange is done */</a>
+<a name="199"><span class="lineNum">     199 </span><span class="lineNoCov">          0 :     for (step = 0; step &lt; size; step++) {</span></a>
+<a name="200"><span class="lineNum">     200 </span>            : </a>
+<a name="201"><span class="lineNum">     201 </span>            :         /* Determine sender and receiver for this step. */</a>
+<a name="202"><span class="lineNum">     202 </span><span class="lineNoCov">          0 :         sendto  = (rank + step) % size;</span></a>
+<a name="203"><span class="lineNum">     203 </span><span class="lineNoCov">          0 :         recvfrom = (rank + size - step) % size;</span></a>
+<a name="204"><span class="lineNum">     204 </span>            : </a>
+<a name="205"><span class="lineNum">     205 </span>            :         /* Determine sending and receiving locations */</a>
+<a name="206"><span class="lineNum">     206 </span><span class="lineNoCov">          0 :         psnd = (char*)sbuf + (ptrdiff_t)sdisps[sendto] * sext;</span></a>
+<a name="207"><span class="lineNum">     207 </span><span class="lineNoCov">          0 :         prcv = (char*)rbuf + (ptrdiff_t)rdisps[recvfrom] * rext;</span></a>
+<a name="208"><span class="lineNum">     208 </span>            : </a>
+<a name="209"><span class="lineNum">     209 </span>            :         /* send and receive */</a>
+<a name="210"><span class="lineNum">     210 </span><span class="lineNoCov">          0 :         err = ompi_coll_base_sendrecv( psnd, scounts[sendto], sdtype, sendto,</span></a>
+<a name="211"><span class="lineNum">     211 </span>            :                                         MCA_COLL_BASE_TAG_ALLTOALLV,</a>
+<a name="212"><span class="lineNum">     212 </span><span class="lineNoCov">          0 :                                         prcv, rcounts[recvfrom], rdtype, recvfrom,</span></a>
+<a name="213"><span class="lineNum">     213 </span>            :                                         MCA_COLL_BASE_TAG_ALLTOALLV,</a>
+<a name="214"><span class="lineNum">     214 </span>            :                                         comm, MPI_STATUS_IGNORE, rank);</a>
+<a name="215"><span class="lineNum">     215 </span><span class="lineNoCov">          0 :         if (MPI_SUCCESS != err) { line = __LINE__; goto err_hndl;  }</span></a>
+<a name="216"><span class="lineNum">     216 </span>            :     }</a>
+<a name="217"><span class="lineNum">     217 </span>            : </a>
+<a name="218"><span class="lineNum">     218 </span><span class="lineNoCov">          0 :     return MPI_SUCCESS;</span></a>
+<a name="219"><span class="lineNum">     219 </span>            : </a>
+<a name="220"><span class="lineNum">     220 </span><span class="lineNoCov">          0 :  err_hndl:</span></a>
+<a name="221"><span class="lineNum">     221 </span>            :     OPAL_OUTPUT((ompi_coll_base_framework.framework_output,</a>
+<a name="222"><span class="lineNum">     222 </span>            :                  &quot;%s:%4d\tError occurred %d, rank %2d at step %d&quot;, __FILE__, line,</a>
+<a name="223"><span class="lineNum">     223 </span>            :                  err, rank, step));</a>
+<a name="224"><span class="lineNum">     224 </span>            :     (void)line;  // silence compiler warning</a>
+<a name="225"><span class="lineNum">     225 </span><span class="lineNoCov">          0 :     return err;</span></a>
+<a name="226"><span class="lineNum">     226 </span>            : }</a>
+<a name="227"><span class="lineNum">     227 </span>            : </a>
+<a name="228"><span class="lineNum">     228 </span>            : /**</a>
+<a name="229"><span class="lineNum">     229 </span>            :  * Linear functions are copied from the basic coll module.  For</a>
+<a name="230"><span class="lineNum">     230 </span>            :  * some small number of nodes and/or small data sizes they are just as</a>
+<a name="231"><span class="lineNum">     231 </span>            :  * fast as base/tree based segmenting operations and as such may be</a>
+<a name="232"><span class="lineNum">     232 </span>            :  * selected by the decision functions.  These are copied into this module</a>
+<a name="233"><span class="lineNum">     233 </span>            :  * due to the way we select modules in V1. i.e. in V2 we will handle this</a>
+<a name="234"><span class="lineNum">     234 </span>            :  * differently and so will not have to duplicate code.</a>
+<a name="235"><span class="lineNum">     235 </span>            :  */</a>
+<a name="236"><span class="lineNum">     236 </span>            : int</a>
+<a name="237"><span class="lineNum">     237 </span><span class="lineNoCov">          0 : ompi_coll_base_alltoallv_intra_basic_linear(const void *sbuf, const int *scounts, const int *sdisps,</span></a>
+<a name="238"><span class="lineNum">     238 </span>            :                                             struct ompi_datatype_t *sdtype,</a>
+<a name="239"><span class="lineNum">     239 </span>            :                                             void *rbuf, const int *rcounts, const int *rdisps,</a>
+<a name="240"><span class="lineNum">     240 </span>            :                                             struct ompi_datatype_t *rdtype,</a>
+<a name="241"><span class="lineNum">     241 </span>            :                                             struct ompi_communicator_t *comm,</a>
+<a name="242"><span class="lineNum">     242 </span>            :                                             mca_coll_base_module_t *module)</a>
+<a name="243"><span class="lineNum">     243 </span>            : {</a>
+<a name="244"><span class="lineNum">     244 </span>            :     int i, size, rank, err, nreqs;</a>
+<a name="245"><span class="lineNum">     245 </span>            :     char *psnd, *prcv;</a>
+<a name="246"><span class="lineNum">     246 </span>            :     ptrdiff_t sext, rext;</a>
+<a name="247"><span class="lineNum">     247 </span>            :     ompi_request_t **preq, **reqs;</a>
+<a name="248"><span class="lineNum">     248 </span><span class="lineNoCov">          0 :     mca_coll_base_module_t *base_module = (mca_coll_base_module_t*) module;</span></a>
+<a name="249"><span class="lineNum">     249 </span><span class="lineNoCov">          0 :     mca_coll_base_comm_t *data = base_module-&gt;base_data;</span></a>
+<a name="250"><span class="lineNum">     250 </span>            : </a>
+<a name="251"><span class="lineNum">     251 </span><span class="lineNoCov">          0 :     if (MPI_IN_PLACE == sbuf) {</span></a>
+<a name="252"><span class="lineNum">     252 </span><span class="lineNoCov">          0 :         return  mca_coll_base_alltoallv_intra_basic_inplace (rbuf, rcounts, rdisps,</span></a>
+<a name="253"><span class="lineNum">     253 </span>            :                                                               rdtype, comm, module);</a>
+<a name="254"><span class="lineNum">     254 </span>            :     }</a>
+<a name="255"><span class="lineNum">     255 </span>            : </a>
+<a name="256"><span class="lineNum">     256 </span><span class="lineNoCov">          0 :     size = ompi_comm_size(comm);</span></a>
+<a name="257"><span class="lineNum">     257 </span><span class="lineNoCov">          0 :     rank = ompi_comm_rank(comm);</span></a>
+<a name="258"><span class="lineNum">     258 </span>            : </a>
+<a name="259"><span class="lineNum">     259 </span>            :     OPAL_OUTPUT((ompi_coll_base_framework.framework_output,</a>
+<a name="260"><span class="lineNum">     260 </span>            :                  &quot;coll:base:alltoallv_intra_basic_linear rank %d&quot;, rank));</a>
+<a name="261"><span class="lineNum">     261 </span>            : </a>
+<a name="262"><span class="lineNum">     262 </span><span class="lineNoCov">          0 :     ompi_datatype_type_extent(sdtype, &amp;sext);</span></a>
+<a name="263"><span class="lineNum">     263 </span><span class="lineNoCov">          0 :     ompi_datatype_type_extent(rdtype, &amp;rext);</span></a>
+<a name="264"><span class="lineNum">     264 </span>            : </a>
+<a name="265"><span class="lineNum">     265 </span>            :     /* Simple optimization - handle send to self first */</a>
+<a name="266"><span class="lineNum">     266 </span><span class="lineNoCov">          0 :     psnd = ((char *) sbuf) + (ptrdiff_t)sdisps[rank] * sext;</span></a>
+<a name="267"><span class="lineNum">     267 </span><span class="lineNoCov">          0 :     prcv = ((char *) rbuf) + (ptrdiff_t)rdisps[rank] * rext;</span></a>
+<a name="268"><span class="lineNum">     268 </span><span class="lineNoCov">          0 :     if (0 != scounts[rank]) {</span></a>
+<a name="269"><span class="lineNum">     269 </span><span class="lineNoCov">          0 :         err = ompi_datatype_sndrcv(psnd, scounts[rank], sdtype,</span></a>
+<a name="270"><span class="lineNum">     270 </span><span class="lineNoCov">          0 :                               prcv, rcounts[rank], rdtype);</span></a>
+<a name="271"><span class="lineNum">     271 </span><span class="lineNoCov">          0 :         if (MPI_SUCCESS != err) {</span></a>
+<a name="272"><span class="lineNum">     272 </span><span class="lineNoCov">          0 :             return err;</span></a>
+<a name="273"><span class="lineNum">     273 </span>            :         }</a>
+<a name="274"><span class="lineNum">     274 </span>            :     }</a>
+<a name="275"><span class="lineNum">     275 </span>            : </a>
+<a name="276"><span class="lineNum">     276 </span>            :     /* If only one process, we're done. */</a>
+<a name="277"><span class="lineNum">     277 </span><span class="lineNoCov">          0 :     if (1 == size) {</span></a>
+<a name="278"><span class="lineNum">     278 </span><span class="lineNoCov">          0 :         return MPI_SUCCESS;</span></a>
+<a name="279"><span class="lineNum">     279 </span>            :     }</a>
+<a name="280"><span class="lineNum">     280 </span>            : </a>
+<a name="281"><span class="lineNum">     281 </span>            :     /* Now, initiate all send/recv to/from others. */</a>
+<a name="282"><span class="lineNum">     282 </span><span class="lineNoCov">          0 :     nreqs = 0;</span></a>
+<a name="283"><span class="lineNum">     283 </span><span class="lineNoCov">          0 :     reqs = preq = ompi_coll_base_comm_get_reqs(data, 2 * size);</span></a>
+<a name="284"><span class="lineNum">     284 </span><span class="lineNoCov">          0 :     if( NULL == reqs ) { err = OMPI_ERR_OUT_OF_RESOURCE; goto err_hndl; }</span></a>
+<a name="285"><span class="lineNum">     285 </span>            : </a>
+<a name="286"><span class="lineNum">     286 </span>            :     /* Post all receives first */</a>
+<a name="287"><span class="lineNum">     287 </span><span class="lineNoCov">          0 :     for (i = 0; i &lt; size; ++i) {</span></a>
+<a name="288"><span class="lineNum">     288 </span><span class="lineNoCov">          0 :         if (i == rank) {</span></a>
+<a name="289"><span class="lineNum">     289 </span><span class="lineNoCov">          0 :             continue;</span></a>
+<a name="290"><span class="lineNum">     290 </span>            :         }</a>
+<a name="291"><span class="lineNum">     291 </span>            : </a>
+<a name="292"><span class="lineNum">     292 </span><span class="lineNoCov">          0 :         ++nreqs;</span></a>
+<a name="293"><span class="lineNum">     293 </span><span class="lineNoCov">          0 :         prcv = ((char *) rbuf) + (ptrdiff_t)rdisps[i] * rext;</span></a>
+<a name="294"><span class="lineNum">     294 </span><span class="lineNoCov">          0 :         err = MCA_PML_CALL(irecv_init(prcv, rcounts[i], rdtype,</span></a>
+<a name="295"><span class="lineNum">     295 </span>            :                                       i, MCA_COLL_BASE_TAG_ALLTOALLV, comm,</a>
+<a name="296"><span class="lineNum">     296 </span>            :                                       preq++));</a>
+<a name="297"><span class="lineNum">     297 </span><span class="lineNoCov">          0 :         if (MPI_SUCCESS != err) { goto err_hndl; }</span></a>
+<a name="298"><span class="lineNum">     298 </span>            :     }</a>
+<a name="299"><span class="lineNum">     299 </span>            : </a>
+<a name="300"><span class="lineNum">     300 </span>            :     /* Now post all sends */</a>
+<a name="301"><span class="lineNum">     301 </span><span class="lineNoCov">          0 :     for (i = 0; i &lt; size; ++i) {</span></a>
+<a name="302"><span class="lineNum">     302 </span><span class="lineNoCov">          0 :         if (i == rank) {</span></a>
+<a name="303"><span class="lineNum">     303 </span><span class="lineNoCov">          0 :             continue;</span></a>
+<a name="304"><span class="lineNum">     304 </span>            :         }</a>
+<a name="305"><span class="lineNum">     305 </span>            : </a>
+<a name="306"><span class="lineNum">     306 </span><span class="lineNoCov">          0 :         ++nreqs;</span></a>
+<a name="307"><span class="lineNum">     307 </span><span class="lineNoCov">          0 :         psnd = ((char *) sbuf) + (ptrdiff_t)sdisps[i] * sext;</span></a>
+<a name="308"><span class="lineNum">     308 </span><span class="lineNoCov">          0 :         err = MCA_PML_CALL(isend_init(psnd, scounts[i], sdtype,</span></a>
+<a name="309"><span class="lineNum">     309 </span>            :                                       i, MCA_COLL_BASE_TAG_ALLTOALLV,</a>
+<a name="310"><span class="lineNum">     310 </span>            :                                       MCA_PML_BASE_SEND_STANDARD, comm,</a>
+<a name="311"><span class="lineNum">     311 </span>            :                                       preq++));</a>
+<a name="312"><span class="lineNum">     312 </span><span class="lineNoCov">          0 :         if (MPI_SUCCESS != err) { goto err_hndl; }</span></a>
+<a name="313"><span class="lineNum">     313 </span>            :     }</a>
+<a name="314"><span class="lineNum">     314 </span>            : </a>
+<a name="315"><span class="lineNum">     315 </span>            :     /* Start your engines.  This will never return an error. */</a>
+<a name="316"><span class="lineNum">     316 </span><span class="lineNoCov">          0 :     MCA_PML_CALL(start(nreqs, reqs));</span></a>
+<a name="317"><span class="lineNum">     317 </span>            : </a>
+<a name="318"><span class="lineNum">     318 </span>            :     /* Wait for them all.  If there's an error, note that we don't care</a>
+<a name="319"><span class="lineNum">     319 </span>            :      * what the error was -- just that there *was* an error.  The PML</a>
+<a name="320"><span class="lineNum">     320 </span>            :      * will finish all requests, even if one or more of them fail.</a>
+<a name="321"><span class="lineNum">     321 </span>            :      * i.e., by the end of this call, all the requests are free-able.</a>
+<a name="322"><span class="lineNum">     322 </span>            :      * So free them anyway -- even if there was an error, and return the</a>
+<a name="323"><span class="lineNum">     323 </span>            :      * error after we free everything. */</a>
+<a name="324"><span class="lineNum">     324 </span><span class="lineNoCov">          0 :     err = ompi_request_wait_all(nreqs, reqs, MPI_STATUSES_IGNORE);</span></a>
+<a name="325"><span class="lineNum">     325 </span>            : </a>
+<a name="326"><span class="lineNum">     326 </span><span class="lineNoCov">          0 :  err_hndl:</span></a>
+<a name="327"><span class="lineNum">     327 </span>            :     /* find a real error code */</a>
+<a name="328"><span class="lineNum">     328 </span><span class="lineNoCov">          0 :     if (MPI_ERR_IN_STATUS == err) {</span></a>
+<a name="329"><span class="lineNum">     329 </span><span class="lineNoCov">          0 :         for( i = 0; i &lt; nreqs; i++ ) {</span></a>
+<a name="330"><span class="lineNum">     330 </span><span class="lineNoCov">          0 :             if (MPI_REQUEST_NULL == reqs[i]) continue;</span></a>
+<a name="331"><span class="lineNum">     331 </span><span class="lineNoCov">          0 :             if (MPI_ERR_PENDING == reqs[i]-&gt;req_status.MPI_ERROR) continue;</span></a>
+<a name="332"><span class="lineNum">     332 </span><span class="lineNoCov">          0 :             if (reqs[i]-&gt;req_status.MPI_ERROR != MPI_SUCCESS) {</span></a>
+<a name="333"><span class="lineNum">     333 </span><span class="lineNoCov">          0 :                 err = reqs[i]-&gt;req_status.MPI_ERROR;</span></a>
+<a name="334"><span class="lineNum">     334 </span><span class="lineNoCov">          0 :                 break;</span></a>
+<a name="335"><span class="lineNum">     335 </span>            :             }</a>
+<a name="336"><span class="lineNum">     336 </span>            :         }</a>
+<a name="337"><span class="lineNum">     337 </span>            :     }</a>
+<a name="338"><span class="lineNum">     338 </span>            :     /* Free the requests in all cases as they are persistent */</a>
+<a name="339"><span class="lineNum">     339 </span><span class="lineNoCov">          0 :     ompi_coll_base_free_reqs(reqs, nreqs);</span></a>
+<a name="340"><span class="lineNum">     340 </span>            : </a>
+<a name="341"><span class="lineNum">     341 </span><span class="lineNoCov">          0 :     return err;</span></a>
+<a name="342"><span class="lineNum">     342 </span>            : }</a>
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.14</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

@@ -1,0 +1,6 @@
+contiguous checksum 0
+packed checksum     0
+sparse checksum     0
+COOL the 3 checksum match
+manual checksum     44dd1225
+PASS checksum (exit status: 0)

@@ -1,0 +1,14 @@
+[DESKTOP-MS6GFL8:19810] Datatype 0x55df1bf6d440[] id -1 size 96 align 8 opal_id 0 length 4 used 3
+true_lb 0 true_ub 160 (true_extent 160) lb 0 ub 160 (extent 160)
+nbElems 12 loops 2 flags 104 (committed )-c-----GD--[---][---]
+   contain OPAL_FLOAT8:* 
+-------G---[---][---]    OPAL_LOOP_S 2 times the next 2 elements extent 80
+--C---P-D--[---][---]    OPAL_FLOAT8 count 3 disp 0x0 (0) blen 2 extent 32 (size 48)
+-------G---[---][---]    OPAL_LOOP_E prev 2 elements first elem displacement 0 size of data 48
+-------G---[---][---]    OPAL_LOOP_E prev 3 elements first elem displacement 0 size of data 96
+Optimized description 
+--C---P-D--[---][---]    OPAL_FLOAT8 count 3 disp 0x0 (0) blen 2 extent 32 (size 48)
+--C---P-D--[---][---]    OPAL_FLOAT8 count 3 disp 0x50 (80) blen 2 extent 32 (size 48)
+-------G---[---][---]    OPAL_LOOP_E prev 2 elements first elem displacement 0 size of data 96
+
+PASS partial (exit status: 0)

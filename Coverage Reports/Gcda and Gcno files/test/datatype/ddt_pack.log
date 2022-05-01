@@ -1,0 +1,16 @@
+---> Basic test with MPI_INT
+	PASSED
+---> Simple test using a struct and few predefined datatype (4 * MPI_INT).
+	PASSED
+---> Less Basic test with MPI_Type_vector
+	PASSED
+---> Test with MPI_Type_create_indexed_block
+	PASSED
+---> Advanced test with hindexed
+	PASSED
+---> Even more advanced test using the previous type and struct
+	PASSED
+---> Basic test with dup'ed MPI_INT
+	PASSED
+	PASSED
+PASS ddt_pack (exit status: 0)

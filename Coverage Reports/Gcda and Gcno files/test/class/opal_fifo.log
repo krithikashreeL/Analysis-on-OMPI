@@ -1,0 +1,22 @@
+Exhaustive atomics thread finished. Popped 690509 items. Time: 6 s 758481 us 9787 nsec/poppush
+Exhaustive atomics thread finished. Popped 698928 items. Time: 7 s 125088 us 10194 nsec/poppush
+Exhaustive atomics thread finished. Popped 674375 items. Time: 7 s 142191 us 10590 nsec/poppush
+Exhaustive atomics thread finished. Popped 663470 items. Time: 7 s 173935 us 10812 nsec/poppush
+Exhaustive atomics thread finished. Popped 730491 items. Time: 7 s 372370 us 10092 nsec/poppush
+Exhaustive atomics thread finished. Popped 702240 items. Time: 7 s 434353 us 10586 nsec/poppush
+Exhaustive atomics thread finished. Popped 753893 items. Time: 7 s 431932 us 9858 nsec/poppush
+Exhaustive atomics thread finished. Popped 742492 items. Time: 7 s 459740 us 10046 nsec/poppush
+SUPPORT: OMPI Test Passed: opal_fifo_t: (8 tests)
+Single thread test. Time: 0 s 115303 us 115 nsec/poppush
+Atomics thread finished. Time: 0 s 325007 us 325 nsec/poppush
+Atomics thread finished. Time: 7 s 247963 us 7247 nsec/poppush
+Atomics thread finished. Time: 7 s 560327 us 7560 nsec/poppush
+Atomics thread finished. Time: 7 s 628246 us 7628 nsec/poppush
+Atomics thread finished. Time: 7 s 756093 us 7756 nsec/poppush
+Atomics thread finished. Time: 7 s 791880 us 7791 nsec/poppush
+Atomics thread finished. Time: 7 s 918933 us 7918 nsec/poppush
+Atomics thread finished. Time: 7 s 892153 us 7892 nsec/poppush
+Atomics thread finished. Time: 7 s 928126 us 7928 nsec/poppush
+All threads finished. Thread count: 8 Time: 7 s 957661 us 994 nsec/poppush
+All threads finished. Thread count: 8 Time: 7 s 570224 us 946 nsec/poppush
+PASS opal_fifo (exit status: 0)

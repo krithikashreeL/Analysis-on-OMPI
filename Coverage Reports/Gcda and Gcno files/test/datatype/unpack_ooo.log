@@ -1,0 +1,108 @@
+
+
+#
+ * TEST UNPACK OUT OF ORDER
+ #
+
+Stack pos 1 [converted 0/7944]
+[0] index -1, type OPAL_LOOP_S count 331 disp (nil)
+[1] index 0, type OPAL_INT4 count 2 disp (nil)
+
+Stack pos 1 [converted 992/7944]
+[0] index -1, type OPAL_LOOP_S count 290 disp 0x668
+[1] index 1, type OPAL_FLOAT8 count 2 disp 0x668
+
+Stack pos 1 [converted 2317/7944]
+[0] index -1, type OPAL_LOOP_S count 235 disp 0xf00
+[1] index 1, type OPAL_FLOAT8 count 2 disp 0xf00
+
+Stack pos 1 [converted 3309/7944]
+[0] index -1, type OPAL_LOOP_S count 194 disp 0x1568
+[1] index 1, type OPAL_FLOAT8 count 1 disp 0x1578
+
+Stack pos 1 [converted 4301/7944]
+[0] index -1, type OPAL_LOOP_S count 152 disp 0x1bf8
+[1] index 0, type OPAL_INT4 count 1 disp 0x1c00
+
+Stack pos 1 [converted 5293/7944]
+[0] index -1, type OPAL_LOOP_S count 111 disp 0x2260
+[1] index 1, type OPAL_FLOAT8 count 2 disp 0x2260
+
+Stack pos 1 [converted 6285/7944]
+[0] index -1, type OPAL_LOOP_S count 70 disp 0x28c8
+[1] index 1, type OPAL_FLOAT8 count 1 disp 0x28d8
+
+Stack pos 1 [converted 7277/7944]
+[0] index -1, type OPAL_LOOP_S count 28 disp 0x2f58
+[1] index 0, type OPAL_INT4 count 1 disp 0x2f60
+
+Stack pos 1 [converted 0/7944]
+[0] index -1, type OPAL_LOOP_S count 331 disp (nil)
+[1] index 0, type OPAL_INT4 count 2 disp (nil)
+
+Stack pos 1 [converted 2317/7944]
+[0] index -1, type OPAL_LOOP_S count 235 disp 0xf00
+[1] index 1, type OPAL_FLOAT8 count 2 disp 0xf00
+
+Stack pos 1 [converted 3309/7944]
+[0] index -1, type OPAL_LOOP_S count 194 disp 0x1568
+[1] index 1, type OPAL_FLOAT8 count 1 disp 0x1578
+
+Stack pos 1 [converted 4301/7944]
+[0] index -1, type OPAL_LOOP_S count 152 disp 0x1bf8
+[1] index 0, type OPAL_INT4 count 1 disp 0x1c00
+
+Stack pos 1 [converted 5293/7944]
+[0] index -1, type OPAL_LOOP_S count 111 disp 0x2260
+[1] index 1, type OPAL_FLOAT8 count 2 disp 0x2260
+
+Stack pos 1 [converted 6285/7944]
+[0] index -1, type OPAL_LOOP_S count 70 disp 0x28c8
+[1] index 1, type OPAL_FLOAT8 count 1 disp 0x28d8
+
+Stack pos 1 [converted 992/7944]
+[0] index -1, type OPAL_LOOP_S count 290 disp 0x668
+[1] index 1, type OPAL_FLOAT8 count 2 disp 0x668
+
+Stack pos 1 [converted 7277/7944]
+[0] index -1, type OPAL_LOOP_S count 28 disp 0x2f58
+[1] index 0, type OPAL_INT4 count 1 disp 0x2f60
+
+Stack pos 1 [converted 0/7944]
+[0] index -1, type OPAL_LOOP_S count 331 disp (nil)
+[1] index 0, type OPAL_INT4 count 2 disp (nil)
+
+Stack pos 1 [converted 2317/7944]
+[0] index -1, type OPAL_LOOP_S count 235 disp 0xf00
+[1] index 1, type OPAL_FLOAT8 count 2 disp 0xf00
+
+Stack pos 1 [converted 992/7944]
+[0] index -1, type OPAL_LOOP_S count 290 disp 0x668
+[1] index 1, type OPAL_FLOAT8 count 2 disp 0x668
+
+Stack pos 1 [converted 7277/7944]
+[0] index -1, type OPAL_LOOP_S count 28 disp 0x2f58
+[1] index 0, type OPAL_INT4 count 1 disp 0x2f60
+
+Stack pos 1 [converted 0/7944]
+[0] index -1, type OPAL_LOOP_S count 331 disp (nil)
+[1] index 0, type OPAL_INT4 count 2 disp (nil)
+
+Stack pos 1 [converted 2976/7944]
+[0] index -1, type OPAL_LOOP_S count 207 disp 0x1360
+[1] index 0, type OPAL_INT4 count 2 disp 0x1360
+
+Stack pos 1 [converted 1984/7944]
+[0] index -1, type OPAL_LOOP_S count 249 disp 0xcd0
+[1] index 1, type OPAL_FLOAT8 count 1 disp 0xce0
+
+Stack pos 1 [converted 992/7944]
+[0] index -1, type OPAL_LOOP_S count 290 disp 0x668
+[1] index 1, type OPAL_FLOAT8 count 2 disp 0x668
+
+Stack pos 1 [converted 3968/7944]
+[0] index -1, type OPAL_LOOP_S count 166 disp 0x19c8
+[1] index 1, type OPAL_FLOAT8 count 2 disp 0x19c8
+
+unpack out of order [PASSED]
+PASS unpack_ooo (exit status: 0)

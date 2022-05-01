@@ -1,0 +1,13 @@
+SUPPORT: OMPI Test Passed: opal_lifo_t: (7 tests)
+Single thread test. Time: 0 s 105831 us 105 nsec/poppush
+Atomics thread finished. Time: 0 s 531243 us 531 nsec/poppush
+Atomics thread finished. Time: 3 s 162227 us 3162 nsec/poppush
+Atomics thread finished. Time: 3 s 155279 us 3155 nsec/poppush
+Atomics thread finished. Time: 3 s 782286 us 3782 nsec/poppush
+Atomics thread finished. Time: 4 s 163661 us 4163 nsec/poppush
+Atomics thread finished. Time: 4 s 302126 us 4302 nsec/poppush
+Atomics thread finished. Time: 4 s 406117 us 4406 nsec/poppush
+Atomics thread finished. Time: 4 s 443708 us 4443 nsec/poppush
+Atomics thread finished. Time: 4 s 440097 us 4440 nsec/poppush
+All threads finished. Thread count: 8 Time: 4 s 451023 us 556 nsec/poppush
+PASS opal_lifo (exit status: 0)

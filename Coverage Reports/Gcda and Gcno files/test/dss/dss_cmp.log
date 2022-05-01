@@ -1,0 +1,31 @@
+--------------------------------------------------------------------------
+Sorry!  You were supposed to get help about:
+    opal_init:startup:internal-failure
+But I couldn't open the help file:
+    /usr/local/share/openmpi/help-opal-runtime.txt: No such file or directory.  Sorry!
+--------------------------------------------------------------------------
+executing test1
+Test1 succeeded
+executing test2
+Test2 succeeded
+executing test3
+Test3 succeeded
+executing test4
+Test4 succeeded
+executing test5
+Test5 succeeded
+executing test6
+Test6 succeeded
+executing test7
+Test7 succeeded
+executing test8
+Test8 succeeded
+executing test9
+Test9 succeeded
+executing test11
+Test11 succeeded
+executing test12
+Test12 succeeded
+executing test13
+Test13 succeeded
+PASS dss_cmp (exit status: 0)

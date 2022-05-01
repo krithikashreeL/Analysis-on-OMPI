@@ -1,0 +1,70 @@
+SUPPORT: OMPI Test Passed: opal_path_nfs(): (32 tests)
+Test usage: ./opal_path_nfs [DIR]
+On Linux interprets output from mount(8) to check for nfs and verify opal_path_nfs()
+Additionally, you may specify multiple DIR on the cmd-line, of which you the output
+Found 32 mounts
+get_mounts: dirs[0]:/ fs:ext4 nfs:No
+get_mounts: dirs[1]:/mnt/wsl fs:tmpfs nfs:No
+get_mounts: dirs[2]:/init fs:9p nfs:No
+get_mounts: dirs[3]:/dev fs:devtmpfs nfs:No
+get_mounts: dirs[4]:/sys fs:sysfs nfs:No
+get_mounts: dirs[5]:/proc fs:proc nfs:No
+get_mounts: dirs[6]:/dev/pts fs:devpts nfs:No
+get_mounts: dirs[7]:/run fs:tmpfs nfs:No
+get_mounts: dirs[8]:/run/lock fs:tmpfs nfs:No
+get_mounts: dirs[9]:/run/shm fs:tmpfs nfs:No
+get_mounts: dirs[10]:/run/user fs:tmpfs nfs:No
+get_mounts: dirs[11]:/proc/sys/fs/binfmt_misc fs:binfmt_misc nfs:No
+get_mounts: dirs[12]:/sys/fs/cgroup fs:tmpfs nfs:No
+get_mounts: dirs[13]:/usr/lib/wsl/drivers fs:9p nfs:No
+get_mounts: dirs[14]:/usr/lib/wsl/lib fs:9p nfs:No
+get_mounts: dirs[15]:/sys/fs/cgroup/unified fs:cgroup2 nfs:No
+get_mounts: dirs[16]:/sys/fs/cgroup/cpuset fs:cgroup nfs:No
+get_mounts: dirs[17]:/sys/fs/cgroup/cpu fs:cgroup nfs:No
+get_mounts: dirs[18]:/sys/fs/cgroup/cpuacct fs:cgroup nfs:No
+get_mounts: dirs[19]:/sys/fs/cgroup/blkio fs:cgroup nfs:No
+get_mounts: dirs[20]:/sys/fs/cgroup/memory fs:cgroup nfs:No
+get_mounts: dirs[21]:/sys/fs/cgroup/devices fs:cgroup nfs:No
+get_mounts: dirs[22]:/sys/fs/cgroup/freezer fs:cgroup nfs:No
+get_mounts: dirs[23]:/sys/fs/cgroup/net_cls fs:cgroup nfs:No
+get_mounts: dirs[24]:/sys/fs/cgroup/perf_event fs:cgroup nfs:No
+get_mounts: dirs[25]:/sys/fs/cgroup/net_prio fs:cgroup nfs:No
+get_mounts: dirs[26]:/sys/fs/cgroup/hugetlb fs:cgroup nfs:No
+get_mounts: dirs[27]:/sys/fs/cgroup/pids fs:cgroup nfs:No
+get_mounts: dirs[28]:/sys/fs/cgroup/rdma fs:cgroup nfs:No
+get_mounts: dirs[29]:/mnt/c fs:9p nfs:No
+get_mounts: dirs[30]:/mnt/d fs:9p nfs:No
+get_mounts: dirs[31]:/mnt/e fs:9p nfs:No
+test(): file:/mnt/e bool:0
+test(): file:/mnt/d bool:0
+test(): file:/mnt/c bool:0
+test(): file:/sys/fs/cgroup/rdma bool:0
+test(): file:/sys/fs/cgroup/pids bool:0
+test(): file:/sys/fs/cgroup/hugetlb bool:0
+test(): file:/sys/fs/cgroup/net_prio bool:0
+test(): file:/sys/fs/cgroup/perf_event bool:0
+test(): file:/sys/fs/cgroup/net_cls bool:0
+test(): file:/sys/fs/cgroup/freezer bool:0
+test(): file:/sys/fs/cgroup/devices bool:0
+test(): file:/sys/fs/cgroup/memory bool:0
+test(): file:/sys/fs/cgroup/blkio bool:0
+test(): file:/sys/fs/cgroup/cpuacct bool:0
+test(): file:/sys/fs/cgroup/cpu bool:0
+test(): file:/sys/fs/cgroup/cpuset bool:0
+test(): file:/sys/fs/cgroup/unified bool:0
+test(): file:/usr/lib/wsl/lib bool:0
+test(): file:/usr/lib/wsl/drivers bool:0
+test(): file:/sys/fs/cgroup bool:0
+test(): file:/proc/sys/fs/binfmt_misc bool:0
+test(): file:/run/user bool:0
+test(): file:/run/shm bool:0
+test(): file:/run/lock bool:0
+test(): file:/run bool:0
+test(): file:/dev/pts bool:0
+test(): file:/proc bool:0
+test(): file:/sys bool:0
+test(): file:/dev bool:0
+test(): file:/init bool:0
+test(): file:/mnt/wsl bool:0
+test(): file:/ bool:0
+PASS opal_path_nfs (exit status: 0)

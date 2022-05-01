@@ -1,0 +1,560 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - main_coverage.info - ompi/runtime/ompi_spc.c</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">ompi/runtime</a> - ompi_spc.c<span style="font-size: 80%;"> (source / <a href="ompi_spc.c.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">main_coverage.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">134</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2022-04-27 17:59:59</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">15</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /*</a>
+<a name="2"><span class="lineNum">       2 </span>            :  * Copyright (c) 2018-2019 The University of Tennessee and The University</a>
+<a name="3"><span class="lineNum">       3 </span>            :  *                         of Tennessee Research Foundation.  All rights</a>
+<a name="4"><span class="lineNum">       4 </span>            :  *                         reserved.</a>
+<a name="5"><span class="lineNum">       5 </span>            :  *</a>
+<a name="6"><span class="lineNum">       6 </span>            :  * Copyright (c) 2018      Cisco Systems, Inc.  All rights reserved</a>
+<a name="7"><span class="lineNum">       7 </span>            :  * Copyright (c) 2018      Research Organization for Information Science</a>
+<a name="8"><span class="lineNum">       8 </span>            :  *                         and Technology (RIST).  All rights reserved.</a>
+<a name="9"><span class="lineNum">       9 </span>            :  * Copyright (c) 2019      Mellanox Technologies, Inc.</a>
+<a name="10"><span class="lineNum">      10 </span>            :  *                         All rights reserved.</a>
+<a name="11"><span class="lineNum">      11 </span>            :  * Copyright (c) 2020      IBM Corporation. All rights reserved.</a>
+<a name="12"><span class="lineNum">      12 </span>            :  * $COPYRIGHT$</a>
+<a name="13"><span class="lineNum">      13 </span>            :  *</a>
+<a name="14"><span class="lineNum">      14 </span>            :  * Additional copyrights may follow</a>
+<a name="15"><span class="lineNum">      15 </span>            :  *</a>
+<a name="16"><span class="lineNum">      16 </span>            :  * $HEADER$</a>
+<a name="17"><span class="lineNum">      17 </span>            :  */</a>
+<a name="18"><span class="lineNum">      18 </span>            : </a>
+<a name="19"><span class="lineNum">      19 </span>            : #include &quot;ompi_spc.h&quot;</a>
+<a name="20"><span class="lineNum">      20 </span>            : </a>
+<a name="21"><span class="lineNum">      21 </span>            : static opal_timer_t sys_clock_freq_mhz = 0;</a>
+<a name="22"><span class="lineNum">      22 </span>            : </a>
+<a name="23"><span class="lineNum">      23 </span>            : static void ompi_spc_dump(void);</a>
+<a name="24"><span class="lineNum">      24 </span>            : </a>
+<a name="25"><span class="lineNum">      25 </span>            : /* Array for converting from SPC indices to MPI_T indices */</a>
+<a name="26"><span class="lineNum">      26 </span>            : static bool mpi_t_enabled = false;</a>
+<a name="27"><span class="lineNum">      27 </span>            : static ompi_communicator_t *ompi_spc_comm = NULL;</a>
+<a name="28"><span class="lineNum">      28 </span>            : </a>
+<a name="29"><span class="lineNum">      29 </span>            : typedef struct ompi_spc_event_t {</a>
+<a name="30"><span class="lineNum">      30 </span>            :     const char* counter_name;</a>
+<a name="31"><span class="lineNum">      31 </span>            :     const char* counter_description;</a>
+<a name="32"><span class="lineNum">      32 </span>            : } ompi_spc_event_t;</a>
+<a name="33"><span class="lineNum">      33 </span>            : </a>
+<a name="34"><span class="lineNum">      34 </span>            : #define SET_COUNTER_ARRAY(NAME, DESC)   [NAME] = { .counter_name = #NAME, .counter_description = DESC }</a>
+<a name="35"><span class="lineNum">      35 </span>            : </a>
+<a name="36"><span class="lineNum">      36 </span>            : static ompi_spc_event_t ompi_spc_events_names[OMPI_SPC_NUM_COUNTERS] = {</a>
+<a name="37"><span class="lineNum">      37 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_SEND, &quot;The number of times MPI_Send was called.&quot;),</a>
+<a name="38"><span class="lineNum">      38 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_BSEND, &quot;The number of times MPI_Bsend was called.&quot;),</a>
+<a name="39"><span class="lineNum">      39 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_RSEND, &quot;The number of times MPI_Rsend was called.&quot;),</a>
+<a name="40"><span class="lineNum">      40 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_SSEND, &quot;The number of times MPI_Ssend was called.&quot;),</a>
+<a name="41"><span class="lineNum">      41 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_RECV, &quot;The number of times MPI_Recv was called.&quot;),</a>
+<a name="42"><span class="lineNum">      42 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_MRECV, &quot;The number of times MPI_Mrecv was called.&quot;),</a>
+<a name="43"><span class="lineNum">      43 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_ISEND, &quot;The number of times MPI_Isend was called.&quot;),</a>
+<a name="44"><span class="lineNum">      44 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_IBSEND, &quot;The number of times MPI_Ibsend was called.&quot;),</a>
+<a name="45"><span class="lineNum">      45 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_IRSEND, &quot;The number of times MPI_Irsend was called.&quot;),</a>
+<a name="46"><span class="lineNum">      46 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_ISSEND, &quot;The number of times MPI_Issend was called.&quot;),</a>
+<a name="47"><span class="lineNum">      47 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_IRECV, &quot;The number of times MPI_Irecv was called.&quot;),</a>
+<a name="48"><span class="lineNum">      48 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_SENDRECV, &quot;The number of times MPI_Sendrecv was called.&quot;),</a>
+<a name="49"><span class="lineNum">      49 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_SENDRECV_REPLACE, &quot;The number of times MPI_Sendrecv_replace was called.&quot;),</a>
+<a name="50"><span class="lineNum">      50 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_PUT, &quot;The number of times MPI_Put was called.&quot;),</a>
+<a name="51"><span class="lineNum">      51 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_RPUT, &quot;The number of times MPI_Rput was called.&quot;),</a>
+<a name="52"><span class="lineNum">      52 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_GET, &quot;The number of times MPI_Get was called.&quot;),</a>
+<a name="53"><span class="lineNum">      53 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_RGET, &quot;The number of times MPI_Rget was called.&quot;),</a>
+<a name="54"><span class="lineNum">      54 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_PROBE, &quot;The number of times MPI_Probe was called.&quot;),</a>
+<a name="55"><span class="lineNum">      55 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_IPROBE, &quot;The number of times MPI_Iprobe was called.&quot;),</a>
+<a name="56"><span class="lineNum">      56 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_BCAST, &quot;The number of times MPI_Bcast was called.&quot;),</a>
+<a name="57"><span class="lineNum">      57 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_IBCAST, &quot;The number of times MPI_Ibcast was called.&quot;),</a>
+<a name="58"><span class="lineNum">      58 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_BCAST_INIT, &quot;The number of times MPIX_Bcast_init was called.&quot;),</a>
+<a name="59"><span class="lineNum">      59 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_REDUCE, &quot;The number of times MPI_Reduce was called.&quot;),</a>
+<a name="60"><span class="lineNum">      60 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_REDUCE_SCATTER, &quot;The number of times MPI_Reduce_scatter was called.&quot;),</a>
+<a name="61"><span class="lineNum">      61 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_REDUCE_SCATTER_BLOCK, &quot;The number of times MPI_Reduce_scatter_block was called.&quot;),</a>
+<a name="62"><span class="lineNum">      62 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_IREDUCE, &quot;The number of times MPI_Ireduce was called.&quot;),</a>
+<a name="63"><span class="lineNum">      63 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_IREDUCE_SCATTER, &quot;The number of times MPI_Ireduce_scatter was called.&quot;),</a>
+<a name="64"><span class="lineNum">      64 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_IREDUCE_SCATTER_BLOCK, &quot;The number of times MPI_Ireduce_scatter_block was called.&quot;),</a>
+<a name="65"><span class="lineNum">      65 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_REDUCE_INIT, &quot;The number of times MPIX_Reduce_init was called.&quot;),</a>
+<a name="66"><span class="lineNum">      66 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_REDUCE_SCATTER_INIT, &quot;The number of times MPIX_Reduce_scatter_init was called.&quot;),</a>
+<a name="67"><span class="lineNum">      67 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_REDUCE_SCATTER_BLOCK_INIT, &quot;The number of times MPIX_Reduce_scatter_block_init was called.&quot;),</a>
+<a name="68"><span class="lineNum">      68 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_ALLREDUCE, &quot;The number of times MPI_Allreduce was called.&quot;),</a>
+<a name="69"><span class="lineNum">      69 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_IALLREDUCE, &quot;The number of times MPI_Iallreduce was called.&quot;),</a>
+<a name="70"><span class="lineNum">      70 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_ALLREDUCE_INIT, &quot;The number of times MPIX_Allreduce_init was called.&quot;),</a>
+<a name="71"><span class="lineNum">      71 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_SCAN, &quot;The number of times MPI_Scan was called.&quot;),</a>
+<a name="72"><span class="lineNum">      72 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_EXSCAN, &quot;The number of times MPI_Exscan was called.&quot;),</a>
+<a name="73"><span class="lineNum">      73 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_ISCAN, &quot;The number of times MPI_Iscan was called.&quot;),</a>
+<a name="74"><span class="lineNum">      74 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_IEXSCAN, &quot;The number of times MPI_Iexscan was called.&quot;),</a>
+<a name="75"><span class="lineNum">      75 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_SCAN_INIT, &quot;The number of times MPIX_Scan_init was called.&quot;),</a>
+<a name="76"><span class="lineNum">      76 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_EXSCAN_INIT, &quot;The number of times MPIX_Exscan_init was called.&quot;),</a>
+<a name="77"><span class="lineNum">      77 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_SCATTER, &quot;The number of times MPI_Scatter was called.&quot;),</a>
+<a name="78"><span class="lineNum">      78 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_SCATTERV, &quot;The number of times MPI_Scatterv was called.&quot;),</a>
+<a name="79"><span class="lineNum">      79 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_ISCATTER, &quot;The number of times MPI_Iscatter was called.&quot;),</a>
+<a name="80"><span class="lineNum">      80 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_ISCATTERV, &quot;The number of times MPI_Iscatterv was called.&quot;),</a>
+<a name="81"><span class="lineNum">      81 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_SCATTER_INIT, &quot;The number of times MPIX_Scatter_init was called.&quot;),</a>
+<a name="82"><span class="lineNum">      82 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_SCATTERV_INIT, &quot;The number of times MPIX_Scatterv_init was called.&quot;),</a>
+<a name="83"><span class="lineNum">      83 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_GATHER, &quot;The number of times MPI_Gather was called.&quot;),</a>
+<a name="84"><span class="lineNum">      84 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_GATHERV, &quot;The number of times MPI_Gatherv was called.&quot;),</a>
+<a name="85"><span class="lineNum">      85 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_IGATHER, &quot;The number of times MPI_Igather was called.&quot;),</a>
+<a name="86"><span class="lineNum">      86 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_IGATHERV, &quot;The number of times MPI_Igatherv was called.&quot;),</a>
+<a name="87"><span class="lineNum">      87 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_GATHER_INIT, &quot;The number of times MPIX_Gather_init was called.&quot;),</a>
+<a name="88"><span class="lineNum">      88 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_GATHERV_INIT, &quot;The number of times MPIX_Gatherv_init was called.&quot;),</a>
+<a name="89"><span class="lineNum">      89 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_ALLTOALL, &quot;The number of times MPI_Alltoall was called.&quot;),</a>
+<a name="90"><span class="lineNum">      90 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_ALLTOALLV, &quot;The number of times MPI_Alltoallv was called.&quot;),</a>
+<a name="91"><span class="lineNum">      91 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_ALLTOALLW, &quot;The number of times MPI_Alltoallw was called.&quot;),</a>
+<a name="92"><span class="lineNum">      92 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_IALLTOALL, &quot;The number of times MPI_Ialltoall was called.&quot;),</a>
+<a name="93"><span class="lineNum">      93 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_IALLTOALLV, &quot;The number of times MPI_Ialltoallv was called.&quot;),</a>
+<a name="94"><span class="lineNum">      94 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_IALLTOALLW, &quot;The number of times MPI_Ialltoallw was called.&quot;),</a>
+<a name="95"><span class="lineNum">      95 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_ALLTOALL_INIT, &quot;The number of times MPIX_Alltoall_init was called.&quot;),</a>
+<a name="96"><span class="lineNum">      96 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_ALLTOALLV_INIT, &quot;The number of times MPIX_Alltoallv_init was called.&quot;),</a>
+<a name="97"><span class="lineNum">      97 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_ALLTOALLW_INIT, &quot;The number of times MPIX_Alltoallw_init was called.&quot;),</a>
+<a name="98"><span class="lineNum">      98 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_NEIGHBOR_ALLTOALL, &quot;The number of times MPI_Neighbor_alltoall was called.&quot;),</a>
+<a name="99"><span class="lineNum">      99 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_NEIGHBOR_ALLTOALLV, &quot;The number of times MPI_Neighbor_alltoallv was called.&quot;),</a>
+<a name="100"><span class="lineNum">     100 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_NEIGHBOR_ALLTOALLW, &quot;The number of times MPI_Neighbor_alltoallw was called.&quot;),</a>
+<a name="101"><span class="lineNum">     101 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_INEIGHBOR_ALLTOALL, &quot;The number of times MPI_Ineighbor_alltoall was called.&quot;),</a>
+<a name="102"><span class="lineNum">     102 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_INEIGHBOR_ALLTOALLV, &quot;The number of times MPI_Ineighbor_alltoallv was called.&quot;),</a>
+<a name="103"><span class="lineNum">     103 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_INEIGHBOR_ALLTOALLW, &quot;The number of times MPI_Ineighbor_alltoallw was called.&quot;),</a>
+<a name="104"><span class="lineNum">     104 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_NEIGHBOR_ALLTOALL_INIT, &quot;The number of times MPIX_Neighbor_alltoall_init was called.&quot;),</a>
+<a name="105"><span class="lineNum">     105 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_NEIGHBOR_ALLTOALLV_INIT, &quot;The number of times MPIX_Neighbor_alltoallv_init was called.&quot;),</a>
+<a name="106"><span class="lineNum">     106 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_NEIGHBOR_ALLTOALLW_INIT, &quot;The number of times MPIX_Neighbor_alltoallw_init was called.&quot;),</a>
+<a name="107"><span class="lineNum">     107 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_ALLGATHER, &quot;The number of times MPI_Allgather was called.&quot;),</a>
+<a name="108"><span class="lineNum">     108 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_ALLGATHERV, &quot;The number of times MPI_Allgatherv was called.&quot;),</a>
+<a name="109"><span class="lineNum">     109 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_IALLGATHER, &quot;The number of times MPI_Iallgather was called.&quot;),</a>
+<a name="110"><span class="lineNum">     110 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_IALLGATHERV, &quot;The number of times MPI_Iallgatherv was called.&quot;),</a>
+<a name="111"><span class="lineNum">     111 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_ALLGATHER_INIT, &quot;The number of times MPIX_Allgather_init was called.&quot;),</a>
+<a name="112"><span class="lineNum">     112 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_ALLGATHERV_INIT, &quot;The number of times MPIX_Allgatherv_init was called.&quot;),</a>
+<a name="113"><span class="lineNum">     113 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_NEIGHBOR_ALLGATHER, &quot;The number of times MPI_Neighbor_allgather was called.&quot;),</a>
+<a name="114"><span class="lineNum">     114 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_NEIGHBOR_ALLGATHERV, &quot;The number of times MPI_Neighbor_allgatherv was called.&quot;),</a>
+<a name="115"><span class="lineNum">     115 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_INEIGHBOR_ALLGATHER, &quot;The number of times MPI_Ineighbor_allgather was called.&quot;),</a>
+<a name="116"><span class="lineNum">     116 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_INEIGHBOR_ALLGATHERV, &quot;The number of times MPI_Ineighbor_allgatherv was called.&quot;),</a>
+<a name="117"><span class="lineNum">     117 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_NEIGHBOR_ALLGATHER_INIT, &quot;The number of times MPIX_Neighbor_allgather_init was called.&quot;),</a>
+<a name="118"><span class="lineNum">     118 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_NEIGHBOR_ALLGATHERV_INIT, &quot;The number of times MPIX_Neighbor_allgatherv_init was called.&quot;),</a>
+<a name="119"><span class="lineNum">     119 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_TEST, &quot;The number of times MPI_Test was called.&quot;),</a>
+<a name="120"><span class="lineNum">     120 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_TESTALL, &quot;The number of times MPI_Testall was called.&quot;),</a>
+<a name="121"><span class="lineNum">     121 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_TESTANY, &quot;The number of times MPI_Testany was called.&quot;),</a>
+<a name="122"><span class="lineNum">     122 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_TESTSOME, &quot;The number of times MPI_Testsome was called.&quot;),</a>
+<a name="123"><span class="lineNum">     123 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_WAIT, &quot;The number of times MPI_Wait was called.&quot;),</a>
+<a name="124"><span class="lineNum">     124 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_WAITALL, &quot;The number of times MPI_Waitall was called.&quot;),</a>
+<a name="125"><span class="lineNum">     125 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_WAITANY, &quot;The number of times MPI_Waitany was called.&quot;),</a>
+<a name="126"><span class="lineNum">     126 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_WAITSOME, &quot;The number of times MPI_Waitsome was called.&quot;),</a>
+<a name="127"><span class="lineNum">     127 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_BARRIER, &quot;The number of times MPI_Barrier was called.&quot;),</a>
+<a name="128"><span class="lineNum">     128 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_IBARRIER, &quot;The number of times MPI_Ibarrier was called.&quot;),</a>
+<a name="129"><span class="lineNum">     129 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_BARRIER_INIT, &quot;The number of times MPIX_Barrier_init was called.&quot;),</a>
+<a name="130"><span class="lineNum">     130 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_WTIME, &quot;The number of times MPI_Wtime was called.&quot;),</a>
+<a name="131"><span class="lineNum">     131 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_CANCEL, &quot;The number of times MPI_Cancel was called.&quot;),</a>
+<a name="132"><span class="lineNum">     132 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_BYTES_RECEIVED_USER, &quot;The number of bytes received by the user through point-to-point communications. Note: Includes bytes transferred using internal RMA operations.&quot;),</a>
+<a name="133"><span class="lineNum">     133 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_BYTES_RECEIVED_MPI, &quot;The number of bytes received by MPI through collective, control, or other internal communications.&quot;),</a>
+<a name="134"><span class="lineNum">     134 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_BYTES_SENT_USER, &quot;The number of bytes sent by the user through point-to-point communications.  Note: Includes bytes transferred using internal RMA operations.&quot;),</a>
+<a name="135"><span class="lineNum">     135 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_BYTES_SENT_MPI, &quot;The number of bytes sent by MPI through collective, control, or other internal communications.&quot;),</a>
+<a name="136"><span class="lineNum">     136 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_BYTES_PUT, &quot;The number of bytes sent/received using RMA Put operations both through user-level Put functions and internal Put functions.&quot;),</a>
+<a name="137"><span class="lineNum">     137 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_BYTES_GET, &quot;The number of bytes sent/received using RMA Get operations both through user-level Get functions and internal Get functions.&quot;),</a>
+<a name="138"><span class="lineNum">     138 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_UNEXPECTED, &quot;The number of messages that arrived as unexpected messages.&quot;),</a>
+<a name="139"><span class="lineNum">     139 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_OUT_OF_SEQUENCE, &quot;The number of messages that arrived out of the proper sequence.&quot;),</a>
+<a name="140"><span class="lineNum">     140 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_MATCH_TIME, &quot;The number of microseconds spent matching unexpected messages.  Note: The timer used on the back end is in cycles, which could potentially be problematic on a system where the clock frequency can change.  On such a system, this counter could be inaccurate since we assume a fixed clock rate.&quot;),</a>
+<a name="141"><span class="lineNum">     141 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_UNEXPECTED_IN_QUEUE, &quot;The number of messages that are currently in the unexpected message queue(s) of an MPI process.&quot;),</a>
+<a name="142"><span class="lineNum">     142 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_OOS_IN_QUEUE, &quot;The number of messages that are currently in the out of sequence message queue(s) of an MPI process.&quot;),</a>
+<a name="143"><span class="lineNum">     143 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_MAX_UNEXPECTED_IN_QUEUE, &quot;The maximum number of messages that the unexpected message queue(s) within an MPI process &quot;</a>
+<a name="144"><span class="lineNum">     144 </span>            :                                                     &quot;contained at once since the last reset of this counter. Note: This counter is reset each time it is read.&quot;),</a>
+<a name="145"><span class="lineNum">     145 </span>            :     SET_COUNTER_ARRAY(OMPI_SPC_MAX_OOS_IN_QUEUE, &quot;The maximum number of messages that the out of sequence message queue(s) within an MPI process &quot;</a>
+<a name="146"><span class="lineNum">     146 </span>            :                                              &quot;contained at once since the last reset of this counter. Note: This counter is reset each time it is read.&quot;)</a>
+<a name="147"><span class="lineNum">     147 </span>            : };</a>
+<a name="148"><span class="lineNum">     148 </span>            : </a>
+<a name="149"><span class="lineNum">     149 </span>            : /* An array of integer values to denote whether an event is activated (1) or not (0) */</a>
+<a name="150"><span class="lineNum">     150 </span>            : static uint32_t ompi_spc_attached_event[OMPI_SPC_NUM_COUNTERS / sizeof(uint32_t)] = { 0 };</a>
+<a name="151"><span class="lineNum">     151 </span>            : /* An array of integer values to denote whether an event is timer-based (1) or not (0) */</a>
+<a name="152"><span class="lineNum">     152 </span>            : static uint32_t ompi_spc_timer_event[OMPI_SPC_NUM_COUNTERS / sizeof(uint32_t)] = { 0 };</a>
+<a name="153"><span class="lineNum">     153 </span>            : /* An array of event structures to store the event data (name and value) */</a>
+<a name="154"><span class="lineNum">     154 </span>            : static ompi_spc_t *ompi_spc_events = NULL;</a>
+<a name="155"><span class="lineNum">     155 </span>            : </a>
+<a name="156"><span class="lineNum">     156 </span><span class="lineNoCov">          0 : static inline void SET_SPC_BIT(uint32_t* array, int32_t pos)</span></a>
+<a name="157"><span class="lineNum">     157 </span>            : {</a>
+<a name="158"><span class="lineNum">     158 </span>            :     assert(pos &lt; OMPI_SPC_NUM_COUNTERS);</a>
+<a name="159"><span class="lineNum">     159 </span><span class="lineNoCov">          0 :     array[pos / (8 * sizeof(uint32_t))] |= (1U &lt;&lt; (pos % (8 * sizeof(uint32_t))));</span></a>
+<a name="160"><span class="lineNum">     160 </span><span class="lineNoCov">          0 : }</span></a>
+<a name="161"><span class="lineNum">     161 </span>            : </a>
+<a name="162"><span class="lineNum">     162 </span><span class="lineNoCov">          0 : static inline bool IS_SPC_BIT_SET(uint32_t* array, int32_t pos)</span></a>
+<a name="163"><span class="lineNum">     163 </span>            : {</a>
+<a name="164"><span class="lineNum">     164 </span>            :     assert(pos &lt; OMPI_SPC_NUM_COUNTERS);</a>
+<a name="165"><span class="lineNum">     165 </span><span class="lineNoCov">          0 :     return !!(array[pos / (8 * sizeof(uint32_t))] &amp; (1U &lt;&lt; (pos % (8 * sizeof(uint32_t)))));</span></a>
+<a name="166"><span class="lineNum">     166 </span>            : }</a>
+<a name="167"><span class="lineNum">     167 </span>            : </a>
+<a name="168"><span class="lineNum">     168 </span><span class="lineNoCov">          0 : static inline void CLEAR_SPC_BIT(uint32_t* array, int32_t pos)</span></a>
+<a name="169"><span class="lineNum">     169 </span>            : {</a>
+<a name="170"><span class="lineNum">     170 </span>            :     assert(pos &lt; OMPI_SPC_NUM_COUNTERS);</a>
+<a name="171"><span class="lineNum">     171 </span><span class="lineNoCov">          0 :     array[pos / (8 * sizeof(uint32_t))] &amp;= ~(1U &lt;&lt; (pos % (8 * sizeof(uint32_t))));</span></a>
+<a name="172"><span class="lineNum">     172 </span><span class="lineNoCov">          0 : }</span></a>
+<a name="173"><span class="lineNum">     173 </span>            : </a>
+<a name="174"><span class="lineNum">     174 </span>            : /* ##############################################################</a>
+<a name="175"><span class="lineNum">     175 </span>            :  * ################# Begin MPI_T Functions ######################</a>
+<a name="176"><span class="lineNum">     176 </span>            :  * ##############################################################</a>
+<a name="177"><span class="lineNum">     177 </span>            :  */</a>
+<a name="178"><span class="lineNum">     178 </span>            : static int ompi_spc_notify(mca_base_pvar_t *pvar, mca_base_pvar_event_t event, void *obj_handle, int *count)</a>
+<a name="179"><span class="lineNum">     179 </span>            :     __opal_attribute_unused__;</a>
+<a name="180"><span class="lineNum">     180 </span>            : </a>
+<a name="181"><span class="lineNum">     181 </span><span class="lineNoCov">          0 : static int ompi_spc_notify(mca_base_pvar_t *pvar, mca_base_pvar_event_t event, void *obj_handle, int *count)</span></a>
+<a name="182"><span class="lineNum">     182 </span>            : {</a>
+<a name="183"><span class="lineNum">     183 </span>            :     int index;</a>
+<a name="184"><span class="lineNum">     184 </span>            : </a>
+<a name="185"><span class="lineNum">     185 </span><span class="lineNoCov">          0 :     if(OPAL_LIKELY(!mpi_t_enabled)) {</span></a>
+<a name="186"><span class="lineNum">     186 </span><span class="lineNoCov">          0 :         return MPI_SUCCESS;</span></a>
+<a name="187"><span class="lineNum">     187 </span>            :     }</a>
+<a name="188"><span class="lineNum">     188 </span>            : </a>
+<a name="189"><span class="lineNum">     189 </span><span class="lineNoCov">          0 :     index = (int)(uintptr_t)pvar-&gt;ctx;  /* Convert from MPI_T pvar index to SPC index */</span></a>
+<a name="190"><span class="lineNum">     190 </span>            : </a>
+<a name="191"><span class="lineNum">     191 </span>            :     /* For this event, we need to set count to the number of long long type</a>
+<a name="192"><span class="lineNum">     192 </span>            :      * values for this counter.  All SPC counters are one long long, so we</a>
+<a name="193"><span class="lineNum">     193 </span>            :      * always set count to 1.</a>
+<a name="194"><span class="lineNum">     194 </span>            :      */</a>
+<a name="195"><span class="lineNum">     195 </span><span class="lineNoCov">          0 :     if(MCA_BASE_PVAR_HANDLE_BIND == event) {</span></a>
+<a name="196"><span class="lineNum">     196 </span><span class="lineNoCov">          0 :         *count = 1;</span></a>
+<a name="197"><span class="lineNum">     197 </span>            :     }</a>
+<a name="198"><span class="lineNum">     198 </span>            :     /* For this event, we need to turn on the counter */</a>
+<a name="199"><span class="lineNum">     199 </span><span class="lineNoCov">          0 :     else if(MCA_BASE_PVAR_HANDLE_START == event) {</span></a>
+<a name="200"><span class="lineNum">     200 </span><span class="lineNoCov">          0 :         SET_SPC_BIT(ompi_spc_attached_event, index);</span></a>
+<a name="201"><span class="lineNum">     201 </span>            :     }</a>
+<a name="202"><span class="lineNum">     202 </span>            :     /* For this event, we need to turn off the counter */</a>
+<a name="203"><span class="lineNum">     203 </span><span class="lineNoCov">          0 :     else if(MCA_BASE_PVAR_HANDLE_STOP == event) {</span></a>
+<a name="204"><span class="lineNum">     204 </span><span class="lineNoCov">          0 :         CLEAR_SPC_BIT(ompi_spc_attached_event, index);</span></a>
+<a name="205"><span class="lineNum">     205 </span>            :     }</a>
+<a name="206"><span class="lineNum">     206 </span>            : </a>
+<a name="207"><span class="lineNum">     207 </span><span class="lineNoCov">          0 :     return MPI_SUCCESS;</span></a>
+<a name="208"><span class="lineNum">     208 </span>            : }</a>
+<a name="209"><span class="lineNum">     209 </span>            : </a>
+<a name="210"><span class="lineNum">     210 </span>            : /* ##############################################################</a>
+<a name="211"><span class="lineNum">     211 </span>            :  * ################# Begin SPC Functions ########################</a>
+<a name="212"><span class="lineNum">     212 </span>            :  * ##############################################################</a>
+<a name="213"><span class="lineNum">     213 </span>            :  */</a>
+<a name="214"><span class="lineNum">     214 </span>            : </a>
+<a name="215"><span class="lineNum">     215 </span>            : /* This function returns the current count of an SPC counter that has been retistered</a>
+<a name="216"><span class="lineNum">     216 </span>            :  * as an MPI_T pvar.  The MPI_T index is not necessarily the same as the SPC index,</a>
+<a name="217"><span class="lineNum">     217 </span>            :  * so we need to convert from MPI_T index to SPC index and then set the 'value' argument</a>
+<a name="218"><span class="lineNum">     218 </span>            :  * to the correct value for this pvar.</a>
+<a name="219"><span class="lineNum">     219 </span>            :  */</a>
+<a name="220"><span class="lineNum">     220 </span>            : static int ompi_spc_get_count(const struct mca_base_pvar_t *pvar, void *value, void *obj_handle)</a>
+<a name="221"><span class="lineNum">     221 </span>            :     __opal_attribute_unused__;</a>
+<a name="222"><span class="lineNum">     222 </span>            : </a>
+<a name="223"><span class="lineNum">     223 </span><span class="lineNoCov">          0 : static int ompi_spc_get_count(const struct mca_base_pvar_t *pvar, void *value, void *obj_handle)</span></a>
+<a name="224"><span class="lineNum">     224 </span>            : {</a>
+<a name="225"><span class="lineNum">     225 </span><span class="lineNoCov">          0 :     long long *counter_value = (long long*)value;</span></a>
+<a name="226"><span class="lineNum">     226 </span>            : </a>
+<a name="227"><span class="lineNum">     227 </span><span class="lineNoCov">          0 :     if(OPAL_LIKELY(!mpi_t_enabled)) {</span></a>
+<a name="228"><span class="lineNum">     228 </span><span class="lineNoCov">          0 :         *counter_value = 0;</span></a>
+<a name="229"><span class="lineNum">     229 </span><span class="lineNoCov">          0 :         return MPI_SUCCESS;</span></a>
+<a name="230"><span class="lineNum">     230 </span>            :     }</a>
+<a name="231"><span class="lineNum">     231 </span>            : </a>
+<a name="232"><span class="lineNum">     232 </span>            :     /* Convert from MPI_T pvar index to SPC index */</a>
+<a name="233"><span class="lineNum">     233 </span><span class="lineNoCov">          0 :     int index = (int)(uintptr_t)pvar-&gt;ctx;</span></a>
+<a name="234"><span class="lineNum">     234 </span>            :     /* Set the counter value to the current SPC value */</a>
+<a name="235"><span class="lineNum">     235 </span><span class="lineNoCov">          0 :     *counter_value = (long long)ompi_spc_events[index].value;</span></a>
+<a name="236"><span class="lineNum">     236 </span>            :     /* If this is a timer-based counter, convert from cycles to microseconds */</a>
+<a name="237"><span class="lineNum">     237 </span><span class="lineNoCov">          0 :     if( IS_SPC_BIT_SET(ompi_spc_timer_event, index) ) {</span></a>
+<a name="238"><span class="lineNum">     238 </span><span class="lineNoCov">          0 :         *counter_value /= sys_clock_freq_mhz;</span></a>
+<a name="239"><span class="lineNum">     239 </span>            :     }</a>
+<a name="240"><span class="lineNum">     240 </span>            :     /* If this is a high watermark counter, reset it after it has been read */</a>
+<a name="241"><span class="lineNum">     241 </span><span class="lineNoCov">          0 :     if(index == OMPI_SPC_MAX_UNEXPECTED_IN_QUEUE || index == OMPI_SPC_MAX_OOS_IN_QUEUE) {</span></a>
+<a name="242"><span class="lineNum">     242 </span><span class="lineNoCov">          0 :         ompi_spc_events[index].value = 0;</span></a>
+<a name="243"><span class="lineNum">     243 </span>            :     }</a>
+<a name="244"><span class="lineNum">     244 </span>            : </a>
+<a name="245"><span class="lineNum">     245 </span><span class="lineNoCov">          0 :     return MPI_SUCCESS;</span></a>
+<a name="246"><span class="lineNum">     246 </span>            : }</a>
+<a name="247"><span class="lineNum">     247 </span>            : </a>
+<a name="248"><span class="lineNum">     248 </span>            : /* Initializes the events data structure and allocates memory for it if needed. */</a>
+<a name="249"><span class="lineNum">     249 </span><span class="lineNoCov">          0 : void ompi_spc_events_init(void)</span></a>
+<a name="250"><span class="lineNum">     250 </span>            : {</a>
+<a name="251"><span class="lineNum">     251 </span>            :     int i;</a>
+<a name="252"><span class="lineNum">     252 </span>            : </a>
+<a name="253"><span class="lineNum">     253 </span>            :     /* If the events data structure hasn't been allocated yet, allocate memory for it */</a>
+<a name="254"><span class="lineNum">     254 </span><span class="lineNoCov">          0 :     if(NULL == ompi_spc_events) {</span></a>
+<a name="255"><span class="lineNum">     255 </span><span class="lineNoCov">          0 :         ompi_spc_events = (ompi_spc_t*)malloc(OMPI_SPC_NUM_COUNTERS * sizeof(ompi_spc_t));</span></a>
+<a name="256"><span class="lineNum">     256 </span><span class="lineNoCov">          0 :         if(ompi_spc_events == NULL) {</span></a>
+<a name="257"><span class="lineNum">     257 </span><span class="lineNoCov">          0 :             opal_show_help(&quot;help-mpi-runtime.txt&quot;, &quot;lib-call-fail&quot;, true,</span></a>
+<a name="258"><span class="lineNum">     258 </span>            :                            &quot;malloc&quot;, __FILE__, __LINE__);</a>
+<a name="259"><span class="lineNum">     259 </span><span class="lineNoCov">          0 :             return;</span></a>
+<a name="260"><span class="lineNum">     260 </span>            :         }</a>
+<a name="261"><span class="lineNum">     261 </span>            :     }</a>
+<a name="262"><span class="lineNum">     262 </span>            :     /* The data structure has been allocated, so we simply initialize all of the counters</a>
+<a name="263"><span class="lineNum">     263 </span>            :      * with their names and an initial count of 0.</a>
+<a name="264"><span class="lineNum">     264 </span>            :      */</a>
+<a name="265"><span class="lineNum">     265 </span><span class="lineNoCov">          0 :     for(i = 0; i &lt; OMPI_SPC_NUM_COUNTERS; i++) {</span></a>
+<a name="266"><span class="lineNum">     266 </span><span class="lineNoCov">          0 :         ompi_spc_events[i].name = (char*)ompi_spc_events_names[i].counter_name;</span></a>
+<a name="267"><span class="lineNum">     267 </span><span class="lineNoCov">          0 :         ompi_spc_events[i].value = 0;</span></a>
+<a name="268"><span class="lineNum">     268 </span>            :     }</a>
+<a name="269"><span class="lineNum">     269 </span>            : </a>
+<a name="270"><span class="lineNum">     270 </span><span class="lineNoCov">          0 :     ompi_comm_dup(&amp;ompi_mpi_comm_world.comm, &amp;ompi_spc_comm);</span></a>
+<a name="271"><span class="lineNum">     271 </span>            : }</a>
+<a name="272"><span class="lineNum">     272 </span>            : </a>
+<a name="273"><span class="lineNum">     273 </span>            : /* Initializes the SPC data structures and registers all counters as MPI_T pvars.</a>
+<a name="274"><span class="lineNum">     274 </span>            :  * Turns on only the counters that were specified in the mpi_spc_attach MCA parameter.  </a>
+<a name="275"><span class="lineNum">     275 </span>            :  */</a>
+<a name="276"><span class="lineNum">     276 </span><span class="lineNoCov">          0 : void ompi_spc_init(void)</span></a>
+<a name="277"><span class="lineNum">     277 </span>            : {</a>
+<a name="278"><span class="lineNum">     278 </span><span class="lineNoCov">          0 :     int i, j, ret, found = 0, all_on = 0, matched = 0;</span></a>
+<a name="279"><span class="lineNum">     279 </span>            : </a>
+<a name="280"><span class="lineNum">     280 </span>            :     /* Initialize the clock frequency variable as the CPU's frequency in MHz */</a>
+<a name="281"><span class="lineNum">     281 </span><span class="lineNoCov">          0 :     sys_clock_freq_mhz = opal_timer_base_get_freq() / 1000000;</span></a>
+<a name="282"><span class="lineNum">     282 </span>            : </a>
+<a name="283"><span class="lineNum">     283 </span><span class="lineNoCov">          0 :     ompi_spc_events_init();</span></a>
+<a name="284"><span class="lineNum">     284 </span>            : </a>
+<a name="285"><span class="lineNum">     285 </span>            :     /* Get the MCA params string of counters to turn on */</a>
+<a name="286"><span class="lineNum">     286 </span><span class="lineNoCov">          0 :     char **arg_strings = opal_argv_split(ompi_mpi_spc_attach_string, ',');</span></a>
+<a name="287"><span class="lineNum">     287 </span><span class="lineNoCov">          0 :     int num_args       = opal_argv_count(arg_strings);</span></a>
+<a name="288"><span class="lineNum">     288 </span>            : </a>
+<a name="289"><span class="lineNum">     289 </span>            :     /* If there is only one argument and it is 'all', then all counters</a>
+<a name="290"><span class="lineNum">     290 </span>            :      * should be turned on.  If the size is 0, then no counters will be enabled.</a>
+<a name="291"><span class="lineNum">     291 </span>            :      */</a>
+<a name="292"><span class="lineNum">     292 </span><span class="lineNoCov">          0 :     if(1 == num_args) {</span></a>
+<a name="293"><span class="lineNum">     293 </span><span class="lineNoCov">          0 :         if(strcmp(arg_strings[0], &quot;all&quot;) == 0) {</span></a>
+<a name="294"><span class="lineNum">     294 </span><span class="lineNoCov">          0 :             all_on = 1;</span></a>
+<a name="295"><span class="lineNum">     295 </span>            :         }</a>
+<a name="296"><span class="lineNum">     296 </span>            :     }</a>
+<a name="297"><span class="lineNum">     297 </span>            : </a>
+<a name="298"><span class="lineNum">     298 </span><span class="lineNoCov">          0 :     for(i = 0; i &lt; OMPI_SPC_NUM_COUNTERS; i++) {</span></a>
+<a name="299"><span class="lineNum">     299 </span>            :         /* Reset all timer-based counters */</a>
+<a name="300"><span class="lineNum">     300 </span><span class="lineNoCov">          0 :         CLEAR_SPC_BIT(ompi_spc_timer_event, i);</span></a>
+<a name="301"><span class="lineNum">     301 </span><span class="lineNoCov">          0 :         matched = all_on;</span></a>
+<a name="302"><span class="lineNum">     302 </span>            : </a>
+<a name="303"><span class="lineNum">     303 </span><span class="lineNoCov">          0 :         if( !matched ) {</span></a>
+<a name="304"><span class="lineNum">     304 </span>            :             /* Turn on only the counters that were specified in the MCA parameter */</a>
+<a name="305"><span class="lineNum">     305 </span><span class="lineNoCov">          0 :             for(j = 0; j &lt; num_args; j++) {</span></a>
+<a name="306"><span class="lineNum">     306 </span><span class="lineNoCov">          0 :                 if( 0 == strcmp(ompi_spc_events_names[i].counter_name, arg_strings[j]) ) {</span></a>
+<a name="307"><span class="lineNum">     307 </span><span class="lineNoCov">          0 :                     matched = 1;</span></a>
+<a name="308"><span class="lineNum">     308 </span><span class="lineNoCov">          0 :                     break;</span></a>
+<a name="309"><span class="lineNum">     309 </span>            :                 }</a>
+<a name="310"><span class="lineNum">     310 </span>            :             }</a>
+<a name="311"><span class="lineNum">     311 </span>            :         }</a>
+<a name="312"><span class="lineNum">     312 </span>            : </a>
+<a name="313"><span class="lineNum">     313 </span><span class="lineNoCov">          0 :         if (matched) {</span></a>
+<a name="314"><span class="lineNum">     314 </span><span class="lineNoCov">          0 :             SET_SPC_BIT(ompi_spc_attached_event, i);</span></a>
+<a name="315"><span class="lineNum">     315 </span><span class="lineNoCov">          0 :             mpi_t_enabled = true;</span></a>
+<a name="316"><span class="lineNum">     316 </span><span class="lineNoCov">          0 :             found++;</span></a>
+<a name="317"><span class="lineNum">     317 </span>            :         }</a>
+<a name="318"><span class="lineNum">     318 </span>            : </a>
+<a name="319"><span class="lineNum">     319 </span>            :         /* Registers the current counter as an MPI_T pvar regardless of whether it's been turned on or not */</a>
+<a name="320"><span class="lineNum">     320 </span><span class="lineNoCov">          0 :         ret = mca_base_pvar_register(&quot;ompi&quot;, &quot;runtime&quot;, &quot;spc&quot;, ompi_spc_events_names[i].counter_name, ompi_spc_events_names[i].counter_description,</span></a>
+<a name="321"><span class="lineNum">     321 </span>            :                                      OPAL_INFO_LVL_4, MPI_T_PVAR_CLASS_SIZE,</a>
+<a name="322"><span class="lineNum">     322 </span>            :                                      MCA_BASE_VAR_TYPE_UNSIGNED_LONG_LONG, NULL, MPI_T_BIND_NO_OBJECT,</a>
+<a name="323"><span class="lineNum">     323 </span>            :                                      MCA_BASE_PVAR_FLAG_READONLY | MCA_BASE_PVAR_FLAG_CONTINUOUS,</a>
+<a name="324"><span class="lineNum">     324 </span><span class="lineNoCov">          0 :                                      ompi_spc_get_count, NULL, ompi_spc_notify, (void*)(uintptr_t)i);</span></a>
+<a name="325"><span class="lineNum">     325 </span><span class="lineNoCov">          0 :         if( ret &lt; 0 ) {</span></a>
+<a name="326"><span class="lineNum">     326 </span><span class="lineNoCov">          0 :             mpi_t_enabled = false;</span></a>
+<a name="327"><span class="lineNum">     327 </span><span class="lineNoCov">          0 :             opal_show_help(&quot;help-mpi-runtime.txt&quot;, &quot;spc: MPI_T disabled&quot;, true);</span></a>
+<a name="328"><span class="lineNum">     328 </span><span class="lineNoCov">          0 :             break;</span></a>
+<a name="329"><span class="lineNum">     329 </span>            :         }</a>
+<a name="330"><span class="lineNum">     330 </span>            :     }</a>
+<a name="331"><span class="lineNum">     331 </span>            : </a>
+<a name="332"><span class="lineNum">     332 </span>            :     /* If this is a timer event, set the corresponding timer_event entry */</a>
+<a name="333"><span class="lineNum">     333 </span><span class="lineNoCov">          0 :     SET_SPC_BIT(ompi_spc_timer_event, OMPI_SPC_MATCH_TIME);</span></a>
+<a name="334"><span class="lineNum">     334 </span>            : </a>
+<a name="335"><span class="lineNum">     335 </span><span class="lineNoCov">          0 :     opal_argv_free(arg_strings);</span></a>
+<a name="336"><span class="lineNum">     336 </span><span class="lineNoCov">          0 : }</span></a>
+<a name="337"><span class="lineNum">     337 </span>            : </a>
+<a name="338"><span class="lineNum">     338 </span>            : /* Gathers all of the SPC data onto rank 0 of MPI_COMM_WORLD and prints out all</a>
+<a name="339"><span class="lineNum">     339 </span>            :  * of the counter values to stdout.</a>
+<a name="340"><span class="lineNum">     340 </span>            :  */</a>
+<a name="341"><span class="lineNum">     341 </span><span class="lineNoCov">          0 : static void ompi_spc_dump(void)</span></a>
+<a name="342"><span class="lineNum">     342 </span>            : {</a>
+<a name="343"><span class="lineNum">     343 </span>            :     int i, j, world_size, offset;</a>
+<a name="344"><span class="lineNum">     344 </span><span class="lineNoCov">          0 :     long long *recv_buffer = NULL, *send_buffer;</span></a>
+<a name="345"><span class="lineNum">     345 </span>            : </a>
+<a name="346"><span class="lineNum">     346 </span><span class="lineNoCov">          0 :     int rank = ompi_comm_rank(ompi_spc_comm);</span></a>
+<a name="347"><span class="lineNum">     347 </span><span class="lineNoCov">          0 :     world_size = ompi_comm_size(ompi_spc_comm);</span></a>
+<a name="348"><span class="lineNum">     348 </span>            : </a>
+<a name="349"><span class="lineNum">     349 </span>            :     /* Convert from cycles to usecs before sending */</a>
+<a name="350"><span class="lineNum">     350 </span><span class="lineNoCov">          0 :     for(i = 0; i &lt; OMPI_SPC_NUM_COUNTERS; i++) {</span></a>
+<a name="351"><span class="lineNum">     351 </span><span class="lineNoCov">          0 :         if( IS_SPC_BIT_SET(ompi_spc_timer_event, i) ) {</span></a>
+<a name="352"><span class="lineNum">     352 </span>            :             SPC_CYCLES_TO_USECS(&amp;ompi_spc_events[i].value);</a>
+<a name="353"><span class="lineNum">     353 </span>            :         }</a>
+<a name="354"><span class="lineNum">     354 </span>            :     }</a>
+<a name="355"><span class="lineNum">     355 </span>            : </a>
+<a name="356"><span class="lineNum">     356 </span>            :     /* Aggregate all of the information on rank 0 using MPI_Gather on MPI_COMM_WORLD */</a>
+<a name="357"><span class="lineNum">     357 </span><span class="lineNoCov">          0 :     send_buffer = (long long*)malloc(OMPI_SPC_NUM_COUNTERS * sizeof(long long));</span></a>
+<a name="358"><span class="lineNum">     358 </span><span class="lineNoCov">          0 :     if (NULL == send_buffer) {</span></a>
+<a name="359"><span class="lineNum">     359 </span><span class="lineNoCov">          0 :         opal_show_help(&quot;help-mpi-runtime.txt&quot;, &quot;lib-call-fail&quot;, true,</span></a>
+<a name="360"><span class="lineNum">     360 </span>            :                        &quot;malloc&quot;, __FILE__, __LINE__);</a>
+<a name="361"><span class="lineNum">     361 </span><span class="lineNoCov">          0 :         return;</span></a>
+<a name="362"><span class="lineNum">     362 </span>            :     }</a>
+<a name="363"><span class="lineNum">     363 </span><span class="lineNoCov">          0 :     for(i = 0; i &lt; OMPI_SPC_NUM_COUNTERS; i++) {</span></a>
+<a name="364"><span class="lineNum">     364 </span><span class="lineNoCov">          0 :         send_buffer[i] = (long long)ompi_spc_events[i].value;</span></a>
+<a name="365"><span class="lineNum">     365 </span>            :     }</a>
+<a name="366"><span class="lineNum">     366 </span><span class="lineNoCov">          0 :     if( 0 == rank ) {</span></a>
+<a name="367"><span class="lineNum">     367 </span><span class="lineNoCov">          0 :         recv_buffer = (long long*)malloc(world_size * OMPI_SPC_NUM_COUNTERS * sizeof(long long));</span></a>
+<a name="368"><span class="lineNum">     368 </span><span class="lineNoCov">          0 :         if (NULL == recv_buffer) {</span></a>
+<a name="369"><span class="lineNum">     369 </span><span class="lineNoCov">          0 :             opal_show_help(&quot;help-mpi-runtime.txt&quot;, &quot;lib-call-fail&quot;, true,</span></a>
+<a name="370"><span class="lineNum">     370 </span>            :                            &quot;malloc&quot;, __FILE__, __LINE__);</a>
+<a name="371"><span class="lineNum">     371 </span><span class="lineNoCov">          0 :             return;</span></a>
+<a name="372"><span class="lineNum">     372 </span>            :         }</a>
+<a name="373"><span class="lineNum">     373 </span>            :     }</a>
+<a name="374"><span class="lineNum">     374 </span><span class="lineNoCov">          0 :     (void)ompi_spc_comm-&gt;c_coll-&gt;coll_gather(send_buffer, OMPI_SPC_NUM_COUNTERS, MPI_LONG_LONG,</span></a>
+<a name="375"><span class="lineNum">     375 </span>            :                                     recv_buffer, OMPI_SPC_NUM_COUNTERS, MPI_LONG_LONG,</a>
+<a name="376"><span class="lineNum">     376 </span>            :                                     0, ompi_spc_comm,</a>
+<a name="377"><span class="lineNum">     377 </span><span class="lineNoCov">          0 :                                     ompi_spc_comm-&gt;c_coll-&gt;coll_gather_module);</span></a>
+<a name="378"><span class="lineNum">     378 </span>            : </a>
+<a name="379"><span class="lineNum">     379 </span>            :     /* Once rank 0 has all of the information, print the aggregated counter values for each rank in order */</a>
+<a name="380"><span class="lineNum">     380 </span><span class="lineNoCov">          0 :     if(rank == 0) {</span></a>
+<a name="381"><span class="lineNum">     381 </span><span class="lineNoCov">          0 :         opal_output(0, &quot;Open MPI Software-based Performance Counters:\n&quot;);</span></a>
+<a name="382"><span class="lineNum">     382 </span><span class="lineNoCov">          0 :         offset = 0; /* Offset into the recv_buffer for each rank */</span></a>
+<a name="383"><span class="lineNum">     383 </span><span class="lineNoCov">          0 :         for(j = 0; j &lt; world_size; j++) {</span></a>
+<a name="384"><span class="lineNum">     384 </span><span class="lineNoCov">          0 :             opal_output(0, &quot;MPI_COMM_WORLD Rank %d:\n&quot;, j);</span></a>
+<a name="385"><span class="lineNum">     385 </span><span class="lineNoCov">          0 :             for(i = 0; i &lt; OMPI_SPC_NUM_COUNTERS; i++) {</span></a>
+<a name="386"><span class="lineNum">     386 </span>            :                 /* If this is a timer-based counter, we need to covert from cycles to usecs */</a>
+<a name="387"><span class="lineNum">     387 </span><span class="lineNoCov">          0 :                 if( 0 == recv_buffer[offset+i] ) {</span></a>
+<a name="388"><span class="lineNum">     388 </span><span class="lineNoCov">          0 :                     continue;</span></a>
+<a name="389"><span class="lineNum">     389 </span>            :                 }</a>
+<a name="390"><span class="lineNum">     390 </span><span class="lineNoCov">          0 :                 opal_output(0, &quot;%s -&gt; %lld\n&quot;, ompi_spc_events[i].name, recv_buffer[offset+i]);</span></a>
+<a name="391"><span class="lineNum">     391 </span>            :             }</a>
+<a name="392"><span class="lineNum">     392 </span><span class="lineNoCov">          0 :             opal_output(0, &quot;\n&quot;);</span></a>
+<a name="393"><span class="lineNum">     393 </span><span class="lineNoCov">          0 :             offset += OMPI_SPC_NUM_COUNTERS;</span></a>
+<a name="394"><span class="lineNum">     394 </span>            :         }</a>
+<a name="395"><span class="lineNum">     395 </span><span class="lineNoCov">          0 :         printf(&quot;###########################################################################\n&quot;);</span></a>
+<a name="396"><span class="lineNum">     396 </span><span class="lineNoCov">          0 :         printf(&quot;NOTE: Any counters not shown here were either disabled or had a value of 0.\n&quot;);</span></a>
+<a name="397"><span class="lineNum">     397 </span><span class="lineNoCov">          0 :         printf(&quot;###########################################################################\n&quot;);</span></a>
+<a name="398"><span class="lineNum">     398 </span>            : </a>
+<a name="399"><span class="lineNum">     399 </span><span class="lineNoCov">          0 :         free(recv_buffer);</span></a>
+<a name="400"><span class="lineNum">     400 </span>            :     }</a>
+<a name="401"><span class="lineNum">     401 </span><span class="lineNoCov">          0 :     free(send_buffer);</span></a>
+<a name="402"><span class="lineNum">     402 </span>            : </a>
+<a name="403"><span class="lineNum">     403 </span><span class="lineNoCov">          0 :     ompi_spc_comm-&gt;c_coll-&gt;coll_barrier(ompi_spc_comm, ompi_spc_comm-&gt;c_coll-&gt;coll_barrier_module);</span></a>
+<a name="404"><span class="lineNum">     404 </span>            : }</a>
+<a name="405"><span class="lineNum">     405 </span>            : </a>
+<a name="406"><span class="lineNum">     406 </span>            : /* Frees any dynamically alocated OMPI SPC data structures */</a>
+<a name="407"><span class="lineNum">     407 </span><span class="lineNoCov">          0 : void ompi_spc_fini(void)</span></a>
+<a name="408"><span class="lineNum">     408 </span>            : {</a>
+<a name="409"><span class="lineNum">     409 </span>            :     if (SPC_ENABLE == 1 &amp;&amp; ompi_mpi_spc_dump_enabled) {</a>
+<a name="410"><span class="lineNum">     410 </span>            :         ompi_spc_dump();</a>
+<a name="411"><span class="lineNum">     411 </span>            :     }</a>
+<a name="412"><span class="lineNum">     412 </span>            : </a>
+<a name="413"><span class="lineNum">     413 </span><span class="lineNoCov">          0 :     free(ompi_spc_events); ompi_spc_events = NULL;</span></a>
+<a name="414"><span class="lineNum">     414 </span><span class="lineNoCov">          0 :     ompi_comm_free(&amp;ompi_spc_comm);</span></a>
+<a name="415"><span class="lineNum">     415 </span><span class="lineNoCov">          0 : }</span></a>
+<a name="416"><span class="lineNum">     416 </span>            : </a>
+<a name="417"><span class="lineNum">     417 </span>            : /* Records an update to a counter using an atomic add operation. */</a>
+<a name="418"><span class="lineNum">     418 </span><span class="lineNoCov">          0 : void ompi_spc_record(unsigned int event_id, ompi_spc_value_t value)</span></a>
+<a name="419"><span class="lineNum">     419 </span>            : {</a>
+<a name="420"><span class="lineNum">     420 </span>            :     /* Denoted unlikely because counters will often be turned off. */</a>
+<a name="421"><span class="lineNum">     421 </span><span class="lineNoCov">          0 :     if( OPAL_UNLIKELY(IS_SPC_BIT_SET(ompi_spc_attached_event, event_id)) ) {</span></a>
+<a name="422"><span class="lineNum">     422 </span><span class="lineNoCov">          0 :         OPAL_THREAD_ADD_FETCH_SIZE_T(&amp;(ompi_spc_events[event_id].value), value);</span></a>
+<a name="423"><span class="lineNum">     423 </span>            :     }</a>
+<a name="424"><span class="lineNum">     424 </span><span class="lineNoCov">          0 : }</span></a>
+<a name="425"><span class="lineNum">     425 </span>            : </a>
+<a name="426"><span class="lineNum">     426 </span>            : /* Starts cycle-precision timer and stores the start value in the 'cycles' argument.</a>
+<a name="427"><span class="lineNum">     427 </span>            :  * Note: This assumes that the 'cycles' argument is initialized to 0 if the timer</a>
+<a name="428"><span class="lineNum">     428 </span>            :  *       hasn't been started yet.</a>
+<a name="429"><span class="lineNum">     429 </span>            :  */</a>
+<a name="430"><span class="lineNum">     430 </span><span class="lineNoCov">          0 : void ompi_spc_timer_start(unsigned int event_id, opal_timer_t *cycles)</span></a>
+<a name="431"><span class="lineNum">     431 </span>            : {</a>
+<a name="432"><span class="lineNum">     432 </span>            :     /* Check whether cycles == 0.0 to make sure the timer hasn't started yet.</a>
+<a name="433"><span class="lineNum">     433 </span>            :      * This is denoted unlikely because the counters will often be turned off.</a>
+<a name="434"><span class="lineNum">     434 </span>            :      */</a>
+<a name="435"><span class="lineNum">     435 </span><span class="lineNoCov">          0 :     if( OPAL_UNLIKELY(IS_SPC_BIT_SET(ompi_spc_attached_event, event_id) &amp;&amp; *cycles == 0) ) {</span></a>
+<a name="436"><span class="lineNum">     436 </span><span class="lineNoCov">          0 :         *cycles = opal_timer_base_get_cycles();</span></a>
+<a name="437"><span class="lineNum">     437 </span>            :     }</a>
+<a name="438"><span class="lineNum">     438 </span><span class="lineNoCov">          0 : }</span></a>
+<a name="439"><span class="lineNum">     439 </span>            : </a>
+<a name="440"><span class="lineNum">     440 </span>            : /* Stops a cycle-precision timer and calculates the total elapsed time</a>
+<a name="441"><span class="lineNum">     441 </span>            :  * based on the starting time in 'cycles' and stores the result in the</a>
+<a name="442"><span class="lineNum">     442 </span>            :  * 'cycles' argument.</a>
+<a name="443"><span class="lineNum">     443 </span>            :  */</a>
+<a name="444"><span class="lineNum">     444 </span><span class="lineNoCov">          0 : void ompi_spc_timer_stop(unsigned int event_id, opal_timer_t *cycles)</span></a>
+<a name="445"><span class="lineNum">     445 </span>            : {</a>
+<a name="446"><span class="lineNum">     446 </span>            :     /* This is denoted unlikely because the counters will often be turned off. */</a>
+<a name="447"><span class="lineNum">     447 </span><span class="lineNoCov">          0 :     if( OPAL_UNLIKELY(IS_SPC_BIT_SET(ompi_spc_attached_event, event_id)) ) {</span></a>
+<a name="448"><span class="lineNum">     448 </span><span class="lineNoCov">          0 :         *cycles = opal_timer_base_get_cycles() - *cycles;</span></a>
+<a name="449"><span class="lineNum">     449 </span><span class="lineNoCov">          0 :         OPAL_THREAD_ADD_FETCH_SIZE_T(&amp;ompi_spc_events[event_id].value, (ompi_spc_value_t)*cycles);</span></a>
+<a name="450"><span class="lineNum">     450 </span>            :     }</a>
+<a name="451"><span class="lineNum">     451 </span><span class="lineNoCov">          0 : }</span></a>
+<a name="452"><span class="lineNum">     452 </span>            : </a>
+<a name="453"><span class="lineNum">     453 </span>            : /* Checks a tag, and records the user version of the counter if it's greater</a>
+<a name="454"><span class="lineNum">     454 </span>            :  * than or equal to 0 and records the mpi version of the counter otherwise.</a>
+<a name="455"><span class="lineNum">     455 </span>            :  */</a>
+<a name="456"><span class="lineNum">     456 </span><span class="lineNoCov">          0 : void ompi_spc_user_or_mpi(int tag, ompi_spc_value_t value, unsigned int user_enum, unsigned int mpi_enum)</span></a>
+<a name="457"><span class="lineNum">     457 </span>            : {</a>
+<a name="458"><span class="lineNum">     458 </span>            :     SPC_RECORD( (tag &gt;= 0 ? user_enum : mpi_enum), value);</a>
+<a name="459"><span class="lineNum">     459 </span><span class="lineNoCov">          0 : }</span></a>
+<a name="460"><span class="lineNum">     460 </span>            : </a>
+<a name="461"><span class="lineNum">     461 </span>            : /* Checks whether the counter denoted by value_enum exceeds the current value of the</a>
+<a name="462"><span class="lineNum">     462 </span>            :  * counter denoted by watermark_enum, and if so sets the watermark_enum counter to the</a>
+<a name="463"><span class="lineNum">     463 </span>            :  * value of the value_enum counter.</a>
+<a name="464"><span class="lineNum">     464 </span>            :  */</a>
+<a name="465"><span class="lineNum">     465 </span><span class="lineNoCov">          0 : void ompi_spc_update_watermark(unsigned int watermark_enum, unsigned int value_enum)</span></a>
+<a name="466"><span class="lineNum">     466 </span>            : {</a>
+<a name="467"><span class="lineNum">     467 </span>            :     /* Denoted unlikely because counters will often be turned off. */</a>
+<a name="468"><span class="lineNum">     468 </span><span class="lineNoCov">          0 :     if( OPAL_UNLIKELY(IS_SPC_BIT_SET(ompi_spc_attached_event, watermark_enum) &amp;&amp;</span></a>
+<a name="469"><span class="lineNum">     469 </span>            :                       IS_SPC_BIT_SET(ompi_spc_attached_event, value_enum)) ) {</a>
+<a name="470"><span class="lineNum">     470 </span>            :         /* WARNING: This assumes that this function was called while a lock has already been taken.</a>
+<a name="471"><span class="lineNum">     471 </span>            :          *          This function is NOT thread safe otherwise!</a>
+<a name="472"><span class="lineNum">     472 </span>            :          */</a>
+<a name="473"><span class="lineNum">     473 </span><span class="lineNoCov">          0 :         if(ompi_spc_events[value_enum].value &gt; ompi_spc_events[watermark_enum].value) {</span></a>
+<a name="474"><span class="lineNum">     474 </span><span class="lineNoCov">          0 :             ompi_spc_events[watermark_enum].value = ompi_spc_events[value_enum].value;</span></a>
+<a name="475"><span class="lineNum">     475 </span>            :         }</a>
+<a name="476"><span class="lineNum">     476 </span>            :     }</a>
+<a name="477"><span class="lineNum">     477 </span><span class="lineNoCov">          0 : }</span></a>
+<a name="478"><span class="lineNum">     478 </span>            : </a>
+<a name="479"><span class="lineNum">     479 </span>            : /* Converts a counter value that is in cycles to microseconds.</a>
+<a name="480"><span class="lineNum">     480 </span>            :  */</a>
+<a name="481"><span class="lineNum">     481 </span><span class="lineNoCov">          0 : void ompi_spc_cycles_to_usecs(ompi_spc_value_t *cycles)</span></a>
+<a name="482"><span class="lineNum">     482 </span>            : {</a>
+<a name="483"><span class="lineNum">     483 </span><span class="lineNoCov">          0 :     *cycles = *cycles / sys_clock_freq_mhz;</span></a>
+<a name="484"><span class="lineNum">     484 </span><span class="lineNoCov">          0 : }</span></a>
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.14</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

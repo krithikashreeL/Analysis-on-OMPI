@@ -1,0 +1,1 @@
+PASS atomic_spinlock_noinline (exit status: 0)
