@@ -1,0 +1,13 @@
+tar xf openmpi-<version>.tar.bz2
+cd openmpi-<version>
+sudo apt-get install gcc
+sudo apt-get install g++
+sudo apt-get install build-essentials
+./configure --prefix=$HOME --enable-coverage 
+make -j8 all
+make check
+gcovr --csv -o output.csv
+gcovr --html -o index.html
+make install
+
+

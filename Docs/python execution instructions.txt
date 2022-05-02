@@ -1,0 +1,16 @@
+Installed the below imported library
+
+import os
+import collections
+import csv
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import matplotlib.dates
+from collections import OrderedDict
+
+
+To execute py scripts use ./filename.py or python filename.py
+Make sure to download the required csv and set proper paths
+
+For pydriller issue report generation use github api
