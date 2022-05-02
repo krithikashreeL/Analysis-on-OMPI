@@ -5,7 +5,7 @@ application developers and computer science researchers.
 There are three contributors in this project.\
   1.Krithikashree Lakshminarayanan\
   2.Sai Pavani Gandla\
-  3.SiriChandana Balmoori
+  3.Sirichandana Balmoori
   
 The Analysis-on-OMPI is done in the following steps:\
   1.We have built the OMPI project in our local system and generated a code coverage report\
