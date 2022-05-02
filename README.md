@@ -3,7 +3,7 @@ In this project, we have performed analysis on Open Message Passing Interface (O
 application developers and computer science researchers.
   
 There are three contributors in this project.\
-  1.KrithikaShree LakshmiNArayan\
+  1.Krithikashree Lakshminarayanan\
   2.Sai Pavani Gandla\
   3.SiriChandana Balmoori
   
@@ -12,10 +12,10 @@ The Analysis-on-OMPI is done in the following steps:\
   2.Next examined the locations and usages of assert and debug statements  
   3.By using pydriller we have learnt more about the contributions
   
- We placed all the coverage results that we got into the Coverage Reports folder, this folder has .png files and html files.  
+ We placed all the coverage results that we got into the Coverage Reports folder, this folder has the html file that shows total coverage report.  
  
- Python_scripts folder consists of the python files that we used for analysing assert and debug count in test and production files and it also has gen_figures.py which has script for all the plots that we generated in our project.  
+ Python_scripts folder consists of the python files that we used for analysing assert and debug count in test and production files,pydriller's data extraction scripts and it also has gen_figures.py which has script for all the plots that we generated in our project.  
  
- In the Datasets folder we placed all the csv files that were generated from python scripts and the files that we used for plotting.  
+ In the Datasets folder we placed all the csv files that serves as the dataset for our analysis.  
  
- In the Images folder all the png files that were generated from python scripts are placed into this folder.
+ In the Images folder all the png files that were generated from python scripts are placed.
