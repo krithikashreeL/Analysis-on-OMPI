@@ -3,9 +3,9 @@ In this project, we have performed analysis on Open Message Passing Interface (O
 application developers and computer science researchers.
   
 There are three contributors in this project.\
-  #.KrithikaShree LakshmiNArayan\
-  #.Sai Pavani Gandla\
-  #.SiriChandana Balmoori
+  1.KrithikaShree LakshmiNArayan\
+  2.Sai Pavani Gandla\
+  3.SiriChandana Balmoori
   
  The Analysis-on-OMPI is done in the following steps:\
   We have built the OMPI project in our local system and generated a code coverage report\
