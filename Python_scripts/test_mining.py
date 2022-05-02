@@ -5,7 +5,7 @@ from datetime import datetime
 
 header = ['Test-filename', 'File-path', 'Modification-type', 'Commit-date', 'Author-Name']
 
-with open('project-report.csv', 'w', encoding='UTF8', newline='') as f:
+with open('testreport_mining.csv', 'w', encoding='UTF8', newline='') as f:
     writer = csv.writer(f)
     writer.writerow(header)
 
