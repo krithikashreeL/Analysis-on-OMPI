@@ -8,8 +8,8 @@ The Analysis-on-OMPI is done in the following steps:\
   Next examined the locations and usages of assert and debug statements throughout the project\ 
   By using pydriller we have learnt more about the contributions
   
-There are three contributors in this project.
-  #.KrithikaShree LakshmiNArayan
-  #.Sai Pavani Gandla 
-  #.SiriChandana Balmoori
+There are three contributors in this project.\
+  #.KrithikaShree LakshmiNArayan\
+  #.Sai Pavani Gandla\
+  #.SiriChandana Balmoori\
 
