@@ -15,3 +15,7 @@ The Analysis-on-OMPI is done in the following steps:\
  We placed all the coverage results that we got into the Coverage Reports folder, this folder has .png files and html files.  
  
  Python_scripts folder consists of the python files that we used for analysing assert and debug count in test and production files and it also has gen_figures.py which has script for all the plots that we generated in our project.  
+ 
+ In the Datasets folder we placed all the csv files that were generated from python scripts and the files that we used for plotting.  
+ 
+ In the Images folder all the png files that were generated from python scripts are placed into this folder.
