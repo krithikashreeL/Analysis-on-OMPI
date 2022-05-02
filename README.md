@@ -7,7 +7,7 @@ There are three contributors in this project.\
   2.Sai Pavani Gandla\
   3.SiriChandana Balmoori
   
- The Analysis-on-OMPI is done in the following steps:\
-  We have built the OMPI project in our local system and generated a code coverage report\
-  Next examined the locations and usages of assert and debug statements\ 
-  By using pydriller we have learnt more about the contributions
+The Analysis-on-OMPI is done in the following steps:\
+  1.We have built the OMPI project in our local system and generated a code coverage report\
+  2.Next examined the locations and usages of assert and debug statements\ 
+  3.By using pydriller we have learnt more about the contributions
